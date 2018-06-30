@@ -1,10 +1,7 @@
 var app = app || {};
-
 app.step = 0;
 
-
 app.init = () => {
-
     app.scene = new THREE.Scene();
 
     app.width = window.innerWidth;
@@ -88,24 +85,6 @@ app.init = () => {
     app.sun = app.createSphere(sunP);
     app.scene.add(app.sun);
 
-    // sun (load model)
-    // var mtlLoader = new THREE.MTLLoader();
-    // mtlLoader.setTexturePath('/scales/img/');
-    // mtlLoader.setPath('/scales/img/');
-    // mtlLoader.load('suntexture01.jpg', (materials)=>{
-    //     materials.preload();
-
-    //     var objLoader = new THREE.OBJLoader();
-    //     objLoader.setMaterials(materials);
-    //     objLoader.setPath('/scales/models/');
-    //     objLoader.load('sol.obj', (object)=>{
-    //         object.position.x = 0,
-    //         object.position.y = 0,
-    //         object.position.z = 0,
-
-    //         app.scene.add(object);
-    //     })
-    // })
      
     // general form
     // app.android1 = app.loadModel( 'models/android.js' );
@@ -114,30 +93,36 @@ app.init = () => {
 
     // model testing
     var jsonLoader = new THREE.JSONLoader();
-    jsonLoader.load('models/android.js', ( geometry, materials )=>{
+    jsonLoader.load('models/android.js', ( geometry, materials ) => {
         var material = new THREE.MeshFaceMaterial(materials);
         app.android = new THREE.Mesh(geometry, material);
-        app.android.scale.set(1000,1000,1000);
+        app.android.scale.set(5500,5500,5500);
         app.scene.add(app.android);
-    })
+    });
 
     // how to add second model??
-    var jsonLoader2 = new THREE.JSONLoader();
-    jsonLoader2.load('models/android2.js', (geometry, materials) => {
-        var material2 = new THREE.MeshFaceMaterial(materials);
-        app.android2 = new THREE.Mesh(geometry, material2);
+    jsonLoader.load('models/android2.js', ( geometry2, materials2 ) => {
+        var material2 = new THREE.MeshFaceMaterial(materials2);
+        app.android2 = new THREE.Mesh(geometry2, material2);
         app.android2.scale.set(2000, 2000, 2000);
         app.scene.add(app.android2);
-    })
-    // jsonLoader.load('models/android.js', addModel2ToScene);
-    // function addModel2ToScene( geometry, materials ){
-    //     var material = new THREE.MeshFaceMaterial(materials);
-    //     app.android2 = new THREE.Mesh( geometry, material);
-    //     app.android2.scale.set(2000,2000,2000);
-    //     app.scene.add(app.android);
-    // }
+    });
 
 
+    var mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setTexturePath('/scales/models/');
+    mtlLoader.setPath('/scales/models/');
+    mtlLoader.load('r2-d2.mtl', function (materials) {
+        materials.preload();
+        var objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.setPath('/scales/models/');
+        objLoader.load('r2-d2.obj', object => {
+            object.position.y -= 60;
+            object.scale.set(20000,20000,20000);
+            app.scene.add(object);
+        });
+    });
 
     const sceneSpheres = [];
     const spheresArr = [];
