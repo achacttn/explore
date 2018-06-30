@@ -21,17 +21,17 @@ app.init = () => {
 
     // lighting
     // ambient
-    app.ambientLight = new THREE.AmbientLight(0x666666);
+    app.ambientLight = new THREE.AmbientLight(0xDEDEDE);
     app.scene.add(app.ambientLight);
 
     // spotlight
-    var spotlight1p = {
-        color: 0xFFFFFF,
-        position: { x:-50, y:50, z:30 },
-        shadow: { bool:false, width:2048, height:2048 }
-    }
-    app.spotlight1 = app.createSpotlight(spotlight1p);
-    app.scene.add(app.spotlight1);
+    // var spotlight1p = {
+    //     color: 0xFFFFFF,
+    //     position: { x:-50, y:50, z:30 },
+    //     shadow: { bool:false, width:2048, height:2048 }
+    // }
+    // app.spotlight1 = app.createSpotlight(spotlight1p);
+    // app.scene.add(app.spotlight1);
 
     // camera1
     var camera1p = {
@@ -60,18 +60,69 @@ app.init = () => {
 
     // sphere
     var earthP = {
-        dim: { radius: 20, triangles: 40, other: 40 },
-        position: { x: 0, y: 0, z: 0 },
-        mesh: { material: "lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/earth.jpg') },
+        dim: { radius: 10, triangles: 40, other: 40 },
+        position: { x:0, y:0, z:0 },
+        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/earth.jpg') },
         shadow: { cast: false },
     }
     app.earth = app.createSphere(earthP);
     app.scene.add(app.earth);
 
-    
+    // sun (need to do something with shaders)
+    var sunP = {
+        dim: { radius: 100, triangles: 40, other: 40 },
+        position: { x:0, y:0, z:0 },
+        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/suntexture01.jpg') },
+        shadow: { cast: false },
+    }
+    app.sun = app.createSphere(sunP);
+    app.scene.add(app.sun);
+
+    // sun (load model)
+    // var mtlLoader = new THREE.MTLLoader();
+    // mtlLoader.setTexturePath('/scales/img/');
+    // mtlLoader.setPath('/scales/img/');
+    // mtlLoader.load('suntexture01.jpg', (materials)=>{
+    //     materials.preload();
+
+    //     var objLoader = new THREE.OBJLoader();
+    //     objLoader.setMaterials(materials);
+    //     objLoader.setPath('/scales/models/');
+    //     objLoader.load('sol.obj', (object)=>{
+    //         object.position.x = 0,
+    //         object.position.y = 0,
+    //         object.position.z = 0,
+
+    //         app.scene.add(object);
+    //     })
+    // })
+        
+    // model testing
+    var jsonLoader = new THREE.JSONLoader();
+    jsonLoader.load('models/android.js', ( geometry, materials )=>{
+        var material = new THREE.MeshFaceMaterial(materials);
+        app.android = new THREE.Mesh(geometry, material);
+        app.android.scale.set(1000,1000,1000);
+        app.scene.add(app.android);
+    })
+
+    // how to add second model??
+    jsonLoader.load('models/android.js', addModel2ToScene);
+    function addModel2ToScene( geometry, materials ){
+        var material = new THREE.MeshFaceMaterial(materials);
+        app.android2 = new THREE.Mesh( geometry, material);
+        app.android2.scale.set(0.1,0.1,0.1);
+        app.scene.add(app.android);
+    }
+
+    // general form
+    // app.android = app.loadModel( model );
+    // app.scene.add(app.android);
+
+
     const sceneSpheres = [];
     const spheresArr = [];
-    for( var i=-5; i<19; i+=2 ){
+    for( var i=-5; i<19; i+=3 ){
         spheresArr.push(10**i);
     }
     for( var i=0; i<spheresArr.length; i++ ){

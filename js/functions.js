@@ -27,6 +27,13 @@ app.createMesh = ({ material, color, side, wireframe, map }) => {
     }
 };
 
+// app.loadModel = ( pathString ) => {
+//     const model = new THREE.JSONLoader();
+//     model.load( pathString, textures ){
+//         const texture = new THREE.MeshFaceMaterial(textures);
+//     }
+// }
+
 app.createPlane = ({
     dim:{ width,height },
     position:{ x,y,z },
@@ -105,6 +112,8 @@ app.animate = () => {
     app.stats.update();
     app.earth.rotation.y += 0.01;
     
+    app.sun.rotation.y += 0.01;
+
     app.renderer.render(app.scene, app.camera1);
     requestAnimationFrame(app.animate);
 }
