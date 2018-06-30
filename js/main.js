@@ -2,101 +2,90 @@ var app = app || {};
 
 app.step = 0;
 
-app.controls = {
-    bouncingSpeed: 0.05,
-    rotationSpeed: 0.01,
-    numParticles: 50000,
-    particleDistribution: 200,
-    velocityScale: 1.0,
-};
 
 app.init = () => {
-    console.log('AAAAA');
-
-    app.gui = new dat.GUI();
-    app.gui.add(app.controls, 'bouncingSpeed', 0, 1);
-    app.gui.add(app.controls, 'rotationSpeed', 0, 1);
-    app.gui.add(app.controls, 'velocityScale', -2, 2);
 
     app.scene = new THREE.Scene();
 
     app.width = window.innerWidth;
     app.height = window.innerHeight;
 
-    // camera takes 4 arguments: POV, aspect ratio, near render, far render
-    app.camera = new THREE.PerspectiveCamera(60, app.width / app.height, 0.1, 1000);
-    app.camera.position.set(-30, 40, 30);
-    app.camera.lookAt(app.scene.position);
-
-
-
-    // calculates drawing of objects on lighting and camera
-    // renders it to 2D image in canvas element
     app.renderer = new THREE.WebGLRenderer();
     app.renderer.setSize(app.width, app.height);
-    app.renderer.setClearColor(0x000000); // background
-    // app.renderer.shadowMap.enabled = true; // computationally expensive shadows disabled by default
+    app.renderer.setClearColor(0x000000);
+    // app.renderer.shadowMap.enabled = true;
     // app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // app.axes = new THREE.AxesHelper(40);
-    // app.scene.add( app.axes );
+    app.axes = new THREE.AxesHelper(40);
+    app.scene.add(app.axes);
 
-    // app.plane = app.createPlane();
-    // app.scene.add( app.plane );
-
-    app.cube = app.createCube({
-        x: -4, y: 40, z: 0,
-        xSize: 4, ySize: 4, zSize: 4, colour: 0xFF0000
-    });
-    app.scene.add(app.cube);
-
-    const numCubes = 10;
-    app.cubes = [];
-    for (let i = 0; i < numCubes; i++) {
-        const cube = app.createCube({
-            xSize: 4,
-            ySize: 4,
-            zSize: 4,
-            x: THREE.Math.randInt(-100, 100),
-            y: THREE.Math.randInt(-100, 100),
-            z: THREE.Math.randInt(-100, 100),
-            colour: new THREE.Color(
-                Math.random(),
-                Math.random(),
-                Math.random(),
-            )
-        });
-        app.cubes.push(cube);
-        app.scene.add(cube);
-
-    }
-
-    app.sphere = app.createSphere({ sx: 20, sy: 40, sz: 40, px: 0, py: 0, pz: 0, bool: false, colorSet: 0xFFFFFF });
-    app.scene.add(app.sphere);
-
-    app.particleSystem = app.createParticleSystem();
-    app.scene.add(app.particleSystem);
-
-    // app.sphere2 = app.createSphere(6, 40, 40, 6, 20, 15, true, 0xff3333 );
-    // app.scene.add( app.sphere2 );
-
-    app.spotlight = app.createSpotlight();
-    app.scene.add(app.spotlight);
-
+    // lighting
+    // ambient
     app.ambientLight = new THREE.AmbientLight(0x666666);
     app.scene.add(app.ambientLight);
 
+    // spotlight
+    var spotlight1p = {
+        color: 0xFFFFFF,
+        position: { x:-50, y:50, z:30 },
+        shadow: { bool:false, width:2048, height:2048 }
+    }
+    app.spotlight1 = app.createSpotlight(spotlight1p);
+    app.scene.add(app.spotlight1);
+
+    // camera1
+    var camera1p = {
+        fov: 60,
+        aspect: app.width/app.height,
+        near: 0.1,
+        far: 1000,
+        position: { x:-30, y:40, z:30 }
+    }
+    app.camera1 = app.createCamera(camera1p);
+    app.camera1.lookAt(app.scene.position);
     app.mouseControls = new THREE.OrbitControls(
-        app.camera, app.renderer.domElement
+        app.camera1, app.renderer.domElement
     );
 
+
+    // plane
+    var plane1p = {
+        dim: { width:120, height:60 },
+        position: { x:0, y:0, z:-30 },
+        mesh: { material:"lambert", color:0xFF0000, side:THREE.DoubleSide, wireframe: false},
+        shadow: {cast:false},
+    }
+    app.plane1 = app.createPlane(plane1p);
+    app.scene.add( app.plane1 );
+
+    // sphere
+    var sphere1p = {
+        dim: { radius:20, triangles:40, other:40 },
+        position: { x:0, y:0, z:0 },
+        mesh: { material:"lambert", color:0xFFFFFF, side:undefined, wireframe:false, map: THREE.ImageUtils.loadTexture('img/earth.jpg') },
+        shadow: { cast:false },
+    }
+    app.sphere1 = app.createSphere( sphere1p );
+    app.sphere1bound = new THREE.BoundingBoxHelper(app.sphere1);
+    app.scene.add(app.sphere1);
+    app.scene.add(app.sphere1bound);
+
+    // cubes
+    var cube1p = {
+        dim: { length:4, width:4, height:4 },
+        position: { x:-4, y:40, z:0 },
+        mesh: { material:"lambert", color:0x00FF00, side:undefined, wireframe:false },
+        shadow: {cast:false}
+    }
+    app.cube1 = app.createCube(cube1p);
+    app.scene.add(app.cube1);
+
+    // OTHER
     // add <canvas> element created by renderer to DOM
     document.getElementById('output').appendChild(app.renderer.domElement);
 
     app.stats = app.addStats();
 
-    // perform render
-    // app.renderer.render( app.scene, app.camera );
     app.animate();
 };
 
@@ -106,8 +95,8 @@ app.onResize = () => {
     app.width = window.innerWidth;
     app.height = window.innerHeight;
 
-    app.camera.aspect = app.width / app.height;
-    app.camera.updateProjectionMatrix();
+    app.camera1.aspect = app.width / app.height;
+    app.camera1.updateProjectionMatrix();
 
     app.renderer.setSize(app.width, app.height);
 };
