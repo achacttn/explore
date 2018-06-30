@@ -58,7 +58,7 @@ app.init = () => {
     app.plane1 = app.createPlane(plane1p);
     app.scene.add( app.plane1 );
 
-    // sphere
+    // earth
     var earthP = {
         dim: { radius: 10, triangles: 40, other: 40 },
         position: { x:0, y:0, z:0 },
@@ -68,9 +68,19 @@ app.init = () => {
     app.earth = app.createSphere(earthP);
     app.scene.add(app.earth);
 
+    // jupiter
+    var jupiterP = {
+        dim: { radius: 100, triangles: 40, other: 40 },
+        position: { x: 0, y: 0, z: 0 },
+        mesh: { material: "lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/jupiter.jpg') },
+        shadow: { cast: false },
+    }
+    app.jupiter = app.createSphere(jupiterP);
+    app.scene.add(app.jupiter);
+
     // sun (need to do something with shaders)
     var sunP = {
-        dim: { radius: 100, triangles: 40, other: 40 },
+        dim: { radius: 1000, triangles: 40, other: 40 },
         position: { x:0, y:0, z:0 },
         mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/suntexture01.jpg') },
         shadow: { cast: false },
@@ -96,7 +106,12 @@ app.init = () => {
     //         app.scene.add(object);
     //     })
     // })
-        
+     
+    // general form
+    // app.android1 = app.loadModel( 'models/android.js' );
+    // app.android1.scale.set(1000,1000,1000)
+    // app.scene.add(app.android1);
+
     // model testing
     var jsonLoader = new THREE.JSONLoader();
     jsonLoader.load('models/android.js', ( geometry, materials )=>{
@@ -107,17 +122,21 @@ app.init = () => {
     })
 
     // how to add second model??
-    jsonLoader.load('models/android.js', addModel2ToScene);
-    function addModel2ToScene( geometry, materials ){
-        var material = new THREE.MeshFaceMaterial(materials);
-        app.android2 = new THREE.Mesh( geometry, material);
-        app.android2.scale.set(0.1,0.1,0.1);
-        app.scene.add(app.android);
-    }
+    var jsonLoader2 = new THREE.JSONLoader();
+    jsonLoader2.load('models/android2.js', (geometry, materials) => {
+        var material2 = new THREE.MeshFaceMaterial(materials);
+        app.android2 = new THREE.Mesh(geometry, material2);
+        app.android2.scale.set(2000, 2000, 2000);
+        app.scene.add(app.android2);
+    })
+    // jsonLoader.load('models/android.js', addModel2ToScene);
+    // function addModel2ToScene( geometry, materials ){
+    //     var material = new THREE.MeshFaceMaterial(materials);
+    //     app.android2 = new THREE.Mesh( geometry, material);
+    //     app.android2.scale.set(2000,2000,2000);
+    //     app.scene.add(app.android);
+    // }
 
-    // general form
-    // app.android = app.loadModel( model );
-    // app.scene.add(app.android);
 
 
     const sceneSpheres = [];

@@ -27,11 +27,12 @@ app.createMesh = ({ material, color, side, wireframe, map }) => {
     }
 };
 
-// app.loadModel = ( pathString ) => {
-//     const model = new THREE.JSONLoader();
-//     model.load( pathString, textures ){
-//         const texture = new THREE.MeshFaceMaterial(textures);
-//     }
+// app.loadModel = ( modelPath ) => {
+//     const jsonModel = new THREE.JSONLoader();
+//     jsonModel.load( modelPath, ( geometry, materials )=>{
+//         const modelMaterial = new THREE.MeshFaceMaterial(materials);
+//         return new THREE.Mesh( geometry, modelMaterial );
+//     });
 // }
 
 app.createPlane = ({
