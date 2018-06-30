@@ -103,8 +103,8 @@ app.createParticleSystem = () => {
 app.animate = () => {
 
     app.stats.update();
-    app.sphere1.rotation.y += 0.01;
 
+    app.earth.rotation.y += 0.01;
     
     app.renderer.render(app.scene, app.camera1);
     requestAnimationFrame(app.animate);
