@@ -49,7 +49,7 @@ app.init = () => {
     var plane1p = {
         dim: { width:120, height:60 },
         position: { x:0, y:0, z:-30 },
-        mesh: { material:"lambert", color:0x88CCFF, side:THREE.DoubleSide, wireframe: false},
+        mesh: { material:"lambert", color:0xFF00FF, side:THREE.DoubleSide, wireframe: false},
         shadow: {cast:false},
     }
     app.plane1 = app.createPlane(plane1p);
@@ -69,7 +69,7 @@ app.init = () => {
     var jupiterP = {
         dim: { radius: 100, triangles: 40, other: 40 },
         position: { x: 0, y: 0, z: 0 },
-        mesh: { material: "lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/jupiter.jpg') },
+        mesh: { material: "lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: new THREE.TextureLoader().load('img/jupiter.jpg')},
         shadow: { cast: false },
     }
     app.jupiter = app.createSphere(jupiterP);
@@ -79,7 +79,7 @@ app.init = () => {
     var sunP = {
         dim: { radius: 1000, triangles: 40, other: 40 },
         position: { x:0, y:0, z:0 },
-        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/suntexture01.jpg') },
+        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/suntexture01.jpg')},
         shadow: { cast: false },
     }
     app.sun = app.createSphere(sunP);
@@ -126,7 +126,7 @@ app.init = () => {
 
     const sceneSpheres = [];
     const spheresArr = [];
-    for( var i=-5; i<19; i+=3 ){
+    for( var i=-5; i<20; i+=2 ){
         spheresArr.push(10**i);
     }
     for( var i=0; i<spheresArr.length; i++ ){

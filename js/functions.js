@@ -20,10 +20,12 @@ app.createCamera = ({
     return camera;
 }
 
-app.createMesh = ({ material, color, side, wireframe, map }) => {
+app.createMesh = ({ material, color, side, wireframe, map, normalMap=undefined }) => {
     switch(material){
         case "lambert":
         return new THREE.MeshLambertMaterial({color, side, wireframe, map});
+        case "normal":
+        return new THREE.MeshNormalMaterial({color, side, wireframe, map});
     }
 };
 
