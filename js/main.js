@@ -9,8 +9,8 @@ app.init = (font) => {
     app.renderer = new THREE.WebGLRenderer({ antialias:true, logarithmicDepthBuffer:true });
     app.renderer.setSize(app.width, app.height);
     app.renderer.setClearColor(0x000000);
-    // app.renderer.shadowMap.enabled = true;
-    // app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    app.renderer.shadowMap.enabled = true;
+    app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     app.axes = new THREE.AxesHelper(1e18);
     app.scene.add(app.axes);
@@ -29,23 +29,9 @@ app.init = (font) => {
     // app.spotlight1 = app.createSpotlight(spotlight1p);
     // app.scene.add(app.spotlight1);
 
-    // // adding font
-    // var labelgeometry = new THREE.TextBufferGeometry('TEST!', {
-    //     font: font,
-    //     // size: 80000000,
-    //     // height: 5000,
-    //     size: 800,
-    //     height: 500,
-    // });
-    // labelgeometry.computeBoundingSphere();
-    // labelgeometry.translate( -labelgeometry.boundingSphere.radius, 0, 0);
-    // var material = new THREE.MeshLambertMaterial({
-    //   color: 0xFF0000
-    // });
-    // var textmesh = new THREE.Mesh(labelgeometry, material);
-    // textmesh.scale.set(100, 100, 100);
-    // textmesh.position.set(0,0,0);
-    // app.scene.add(textmesh);
+    app.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    app.directionalLight.position.set(1, 1, 1);
+    app.scene.add(app.dreictionalLight);
 
     // using text function
     var text1p = {
@@ -53,10 +39,11 @@ app.init = (font) => {
         font: font,
         size: 800,
         height: 500,
-        mesh: {material:"lambert", color:0x00FF00}
+        mesh: {material:"lambert", color:0x00FF00},
+        translationFactor:{tx:-1,ty:0,tz:0}
     }
     app.text1 = app.createText(text1p);
-    app.text1.scale.set(100000,100000,100000);
+    app.text1.scale.set(0.000001,0.000001,0.000001);
     app.text1.receiveShadow = true;
     app.scene.add( app.text1 );
 
@@ -171,11 +158,24 @@ app.init = (font) => {
                 child.material.map = app.humanTexture;
             }
         });
-        object.scale.set(100,100,100);
-        object.position.y = -1500;
+        object.scale.set(1000,1000,1000);
+        object.position.y = -15000;
         app.scene.add(object);
     }, onProgress, onError);
 
+    // human label
+    var humanlabelp = {
+        textString: "HUMAN",
+        font: font,
+        size: 1000,
+        height: 500,
+        mesh: { material: "lambert", color: 0x00FF00 },
+        translationFactor: { tx:-1,ty:3.1,tz:0 }
+    }
+    app.humanlabel = app.createText(humanlabelp);
+    app.humanlabel.scale.set(1, 1, 1);
+    app.humanlabel.receiveShadow = true;
+    app.scene.add(app.humanlabel);
     
     // DNA collada model
     let DNA;
@@ -318,7 +318,7 @@ app.init = (font) => {
 // loading font
 const fontWrapper= function(){
     var fontLoader = new THREE.FontLoader();
-    fontLoader.load('fonts/helvetiker_bold.typeface.json', function (font) {
+    fontLoader.load('fonts/droid_sans_regular.typeface.json', function (font) {
         app.init(font);
     });
 }

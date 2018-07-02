@@ -34,10 +34,15 @@ app.createText = ({
     font,
     size,
     height,
-    mesh }) => {
+    mesh,
+    translationFactor:{tx,ty,tz} 
+}) => {
+    console.log(tx, ty, tz);
+    
     const textGeometry = new THREE.TextBufferGeometry(textString,{font,size,height})
     textGeometry.computeBoundingSphere();
-    textGeometry.translate(-textGeometry.boundingSphere.radius, 0, 0);
+    const boundR = textGeometry.boundingSphere.radius;
+    textGeometry.translate(tx*boundR,ty*boundR,tz*boundR);
     const textMesh = app.createMesh(mesh);
     const text = new THREE.Mesh(textGeometry, textMesh);
     return text;
