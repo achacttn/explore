@@ -103,12 +103,22 @@ app.createParticleSystem = () => {
     return particleSystem;
 };
 
+// render loop
+var delta = 0;
 app.animate = () => {
 
     app.stats.update();
     app.earth.rotation.y += 0.01;
     
     app.sun.rotation.y += 0.01;
+
+    delta +=0.1;
+    app.example.material.uniforms.delta.value = 0.5*Math.sin(delta)*0.5;
+    for( var i=0; i<vertexDisplacement.length; i++ ){
+        vertexDisplacement[i] = 0.5+Math.sin(i*delta) * 0.25;
+    };
+    app.example.geometry.attributes.vertexDisplacement.needsUpdate = true;
+
 
     app.renderer.render(app.scene, app.camera1);
     requestAnimationFrame(app.animate);
