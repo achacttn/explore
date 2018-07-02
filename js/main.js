@@ -1,6 +1,6 @@
 var app = app || {};
 app.step = 0;
-app.init = () => {
+app.init = (font) => {
     app.scene = new THREE.Scene();
 
     app.width = window.innerWidth;
@@ -29,6 +29,38 @@ app.init = () => {
     // app.spotlight1 = app.createSpotlight(spotlight1p);
     // app.scene.add(app.spotlight1);
 
+    // // adding font
+    // var labelgeometry = new THREE.TextBufferGeometry('TEST!', {
+    //     font: font,
+    //     // size: 80000000,
+    //     // height: 5000,
+    //     size: 800,
+    //     height: 500,
+    // });
+    // labelgeometry.computeBoundingSphere();
+    // labelgeometry.translate( -labelgeometry.boundingSphere.radius, 0, 0);
+    // var material = new THREE.MeshLambertMaterial({
+    //   color: 0xFF0000
+    // });
+    // var textmesh = new THREE.Mesh(labelgeometry, material);
+    // textmesh.scale.set(100, 100, 100);
+    // textmesh.position.set(0,0,0);
+    // app.scene.add(textmesh);
+
+    // using text function
+    var text1p = {
+        textString: "HELLO",
+        font: font,
+        size: 800,
+        height: 500,
+        mesh: {material:"lambert", color:0x00FF00}
+    }
+    app.text1 = app.createText(text1p);
+    app.text1.scale.set(100000,100000,100000);
+    app.text1.receiveShadow = true;
+    app.scene.add( app.text1 );
+
+
     // camera1
     var camera1p = {
         fov: 60,
@@ -42,17 +74,18 @@ app.init = () => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-
+    // var camera1Helper = new THREE.CameraHelper(app.camera1);
+    // app.scene.add(camera1Helper);
 
     // plane
-    var plane1p = {
-        dim: { width:120, height:60 },
-        position: { x:0, y:0, z:-30 },
-        mesh: { material:"lambert", color:0xFF00AA, side:THREE.DoubleSide, wireframe: false},
-        shadow: {cast:false},
-    }
-    app.plane1 = app.createPlane(plane1p);
-    app.scene.add( app.plane1 );
+    // var plane1p = {
+    //     dim: { width:120, height:60 },
+    //     position: { x:0, y:0, z:-30 },
+    //     mesh: { material:"lambert", color:0xFF00AA, side:THREE.DoubleSide, wireframe: false},
+    //     shadow: {cast:false},
+    // }
+    // app.plane1 = app.createPlane(plane1p);
+    // app.scene.add( app.plane1 );
 
     // earth
     var earthP = {
@@ -89,6 +122,7 @@ app.init = () => {
     var jsonLoader = new THREE.JSONLoader();
     jsonLoader.load('models/android.js', ( geometry, materials ) => {
         var material = new THREE.MeshFaceMaterial(materials);
+        // var material = new THREE.MeshNormalMaterial(materials);
         app.android = new THREE.Mesh(geometry, material);
         app.android.scale.set(15500,15500,15500);
         app.android.position.y = 15000;
@@ -97,13 +131,6 @@ app.init = () => {
         app.scene.add(app.android);
     });
 
-    // // how to add second model??
-    // jsonLoader.load('models/android2.js', ( geometry2, materials2 ) => {
-    //     var material2 = new THREE.MeshFaceMaterial(materials2);
-    //     app.android2 = new THREE.Mesh(geometry2, material2);
-    //     app.android2.scale.set(2000, 2000, 2000);
-    //     app.scene.add(app.android2);
-    // });
 
     // obj/mtl test (r2d2)
     var mtlLoader = new THREE.MTLLoader();
@@ -145,24 +172,35 @@ app.init = () => {
             }
         });
         object.scale.set(100,100,100);
-        object.position.y = -12.5;
+        object.position.y = -1500;
         app.scene.add(object);
     }, onProgress, onError);
 
+    
+    // DNA collada model
+    let DNA;
+    app.DNALoadingManager = new THREE.LoadingManager(function () {
+        app.scene.add(DNA);
+    });
+    app.DNALoader = new THREE.ColladaLoader(app.DNALoadingManager);
+    app.DNALoader.load('models/DNA.dae', function(collada) {
+        DNA = collada.scene;
+        DNA.scale.set(0.001,0.001,0.001);
+    })
 
     // cell collada model
     let cell;
     app.cellLoadingManager = new THREE.LoadingManager(function () {
-        // cell.position.z = 1;
+        cell.position.x = 15.5;
+        cell.position.y = -12.5;
+        cell.position.z = -12.5;
         app.scene.add(cell);
     });
     app.cellLoader = new THREE.ColladaLoader(app.cellLoadingManager);
     app.cellLoader.load('models/cell.dae', function (collada) {
         cell = collada.scene;
-        cell.scale.set(0.01,0.01,0.01);
-
+        cell.scale.set(0.001,0.001,0.001);
     });
-
 
     // // obj/mtl human
     // let humanMTLLoader = new THREE.MTLLoader();
@@ -250,15 +288,15 @@ app.init = () => {
     // app.scene.add(app.sphere4);
     // app.scene.add(app.sphere4bound);
 
-    // cubes
-    var cube1p = {
-        dim: { length:4, width:4, height:4 },
-        position: { x:-4, y:40, z:0 },
-        mesh: { material:"lambert", color:0x00FF00, side:undefined, wireframe:false },
-        shadow: {cast:false}
-    }
-    app.cube1 = app.createCube(cube1p);
-    app.scene.add(app.cube1);
+    // // cubes
+    // var cube1p = {
+    //     dim: { length:4, width:4, height:4 },
+    //     position: { x:-4, y:40, z:0 },
+    //     mesh: { material:"lambert", color:0x00FF00, side:undefined, wireframe:false },
+    //     shadow: {cast:false}
+    // }
+    // app.cube1 = app.createCube(cube1p);
+    // app.scene.add(app.cube1);
 
     // vertexDisplacement;
     vertexDisplacement = new Float32Array(exampleSphere.attributes.position.count);
@@ -277,7 +315,15 @@ app.init = () => {
     app.animate();
 };
 
-window.onload = app.init;
+// loading font
+const fontWrapper= function(){
+    var fontLoader = new THREE.FontLoader();
+    fontLoader.load('fonts/helvetiker_bold.typeface.json', function (font) {
+        app.init(font);
+    });
+}
+
+window.onload = fontWrapper;
 
 app.onResize = () => {
     app.width = window.innerWidth;

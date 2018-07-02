@@ -29,6 +29,19 @@ app.createMesh = ({ material, color, side, wireframe, map, normalMap=undefined }
     }
 };
 
+app.createText = ({
+    textString,
+    font,
+    size,
+    height,
+    mesh }) => {
+    const textGeometry = new THREE.TextBufferGeometry(textString,{font,size,height})
+    textGeometry.computeBoundingSphere();
+    textGeometry.translate(-textGeometry.boundingSphere.radius, 0, 0);
+    const textMesh = app.createMesh(mesh);
+    const text = new THREE.Mesh(textGeometry, textMesh);
+    return text;
+};
 
 app.createPlane = ({
     dim:{ width,height },
