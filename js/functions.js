@@ -157,8 +157,11 @@ app.animate = () => {
     if (app.cellSkyBox) {
         app.camera1.distance < 8.5 ? app.cellSkyBox.visible = false : app.cellSkyBox.visible = true;
     }
+    // if( app.blackholeSkyBox ){
+    //     app.camera1.distance > 1.5*10e9 ?
+    // }
+    // 941078764
 
-    
     // rendering
     app.renderer.render(app.scene, app.camera1);
     requestAnimationFrame(app.animate);

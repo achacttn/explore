@@ -160,7 +160,7 @@ app.init = (font) => {
     app.jupiterImagePrefix = "img/solar_system/solar_system_";
     app.jupiterDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
     app.jupiterImageSuffix = ".tga";
-    app.jupiterSkyGeometry = new THREE.CubeGeometry(1e9, 1e9, 1e9);
+    app.jupiterSkyGeometry = new THREE.CubeGeometry(1.4*1e9, 1.4*1e9, 1.4*1e9);
     app.jupiterMaterialArray = [];
     for (var i = 0; i < 6; i++)
         app.jupiterMaterialArray.push(new THREE.MeshBasicMaterial({
@@ -194,6 +194,22 @@ app.init = (font) => {
     app.sunlabel.rotation.y = 0.85;
     app.sunlabel.receiveShadow = true;
     app.scene.add(app.sunlabel);
+
+    // blackhole skybox
+    app.blackholeImagePrefix = "img/nebula/nebula_";
+    app.blackholeDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
+    app.blackholeImageSuffix = ".tga";
+    app.blackholeSkyGeometry = new THREE.CubeGeometry(1e15, 1e15, 1e15);
+    app.blackholeMaterialArray = [];
+    for (var i = 0; i < 6; i++)
+        app.blackholeMaterialArray.push(new THREE.MeshBasicMaterial({
+            map: TGALoader.load(app.blackholeImagePrefix + app.blackholeDirections[i] + app.blackholeImageSuffix),
+            side: THREE.BackSide
+        }));
+    app.blackholeSkyMaterial = new THREE.MeshFaceMaterial(app.blackholeMaterialArray);
+    app.blackholeSkyBox = new THREE.Mesh(app.blackholeSkyGeometry, app.blackholeSkyMaterial);
+    app.scene.add(app.blackholeSkyBox);
+
 
     // // android model test
     // var jsonLoader = new THREE.JSONLoader();
