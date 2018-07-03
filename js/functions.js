@@ -150,7 +150,18 @@ app.animate = () => {
     if( app.human ){
         app.camera1.distance < 1127 ? app.human.visible = false : app.human.visible = true;
     }
+    // camera vs skybox
+    if( app.humanSkyBox ){
+        app.camera1.distance > 100000 ? app.humanSkyBox.visible = false : app.humanSkyBox.visible = true;
+    }
+    if (app.cellSkyBox) {
+        app.camera1.distance < 8.5 ? app.cellSkyBox.visible = false : app.cellSkyBox.visible = true;
+    }
+
+    
     // rendering
     app.renderer.render(app.scene, app.camera1);
     requestAnimationFrame(app.animate);
 }
+
+// for human body 1302

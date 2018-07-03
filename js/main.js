@@ -14,6 +14,7 @@ app.init = (font) => {
     app.gui.add(app.controls, 'humanRotate', 0, 10);
 
     app.scene = new THREE.Scene();
+    var TGALoader = new THREE.TGALoader();
 
     app.width = window.innerWidth;
     app.height = window.innerHeight;
@@ -79,11 +80,10 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(200, 200, 200);
+    app.camera1.position.set(1.4*(10e3), 1.4*(10e3), 1.4*(10e3));
     app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
     // app.camera1_pivot.rotateOnAxis(app.Y_AXIS, 0.01);
-
 
 
     // var camera1Helper = new THREE.CameraHelper(app.camera1);
@@ -156,6 +156,20 @@ app.init = (font) => {
     app.jupiterlabel.rotation.y = 0.85;
     app.jupiterlabel.receiveShadow = true;
     app.scene.add(app.jupiterlabel);
+    // jupiter skybox
+    app.jupiterImagePrefix = "img/solar_system/solar_system_";
+    app.jupiterDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
+    app.jupiterImageSuffix = ".tga";
+    app.jupiterSkyGeometry = new THREE.CubeGeometry(1e9, 1e9, 1e9);
+    app.jupiterMaterialArray = [];
+    for (var i = 0; i < 6; i++)
+        app.jupiterMaterialArray.push(new THREE.MeshBasicMaterial({
+            map: TGALoader.load(app.jupiterImagePrefix + app.jupiterDirections[i] + app.jupiterImageSuffix),
+            side: THREE.BackSide
+        }));
+    app.jupiterSkyMaterial = new THREE.MeshFaceMaterial(app.jupiterMaterialArray);
+    app.jupiterSkyBox = new THREE.Mesh(app.jupiterSkyGeometry, app.jupiterSkyMaterial);
+    app.scene.add(app.jupiterSkyBox);
 
     // sun (need to do something with shaders)
     var sunP = {
@@ -264,6 +278,20 @@ app.init = (font) => {
     }
     app.humanSpotlight = app.createSpotlight(app.humanSpotlightp);
     app.scene.add(app.humanSpotlight);
+    // human skybox
+    app.humanImagePrefix = "img/mp_midnight/midnight-silence_";
+    app.humanDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
+    app.humanImageSuffix = ".tga";
+    app.humanSkyGeometry = new THREE.CubeGeometry(230000, 230000, 230000);
+    app.humanMaterialArray = [];
+    for (var i = 0; i < 6; i++)
+        app.humanMaterialArray.push(new THREE.MeshBasicMaterial({
+            map: TGALoader.load(app.humanImagePrefix + app.humanDirections[i] + app.humanImageSuffix),
+            side: THREE.BackSide
+        }));
+    app.humanSkyMaterial = new THREE.MeshFaceMaterial(app.humanMaterialArray);
+    app.humanSkyBox = new THREE.Mesh(app.humanSkyGeometry, app.humanSkyMaterial);
+    app.scene.add(app.humanSkyBox);
 
 
     // DNA collada model
@@ -325,6 +353,21 @@ app.init = (font) => {
     }
     app.cellSpotlight = app.createSpotlight(app.cellSpotlightp);
     app.scene.add(app.cellSpotlight);
+    // cell skybox
+    app.cellImagePrefix = "img/blood/blood";
+    app.cellDirections = ["1", "1", "1", "2", "2", "2"];
+    app.cellImageSuffix = ".jpg";
+    app.cellSkyGeometry = new THREE.CubeGeometry(1200, 1200, 1200);
+    app.cellMaterialArray = [];
+    for (var i = 0; i < 6; i++)
+        app.cellMaterialArray.push(new THREE.MeshBasicMaterial({
+            map: THREE.ImageUtils.loadTexture(app.cellImagePrefix + app.cellDirections[i] + app.cellImageSuffix),
+            side: THREE.BackSide
+        }));
+    app.cellSkyMaterial = new THREE.MeshFaceMaterial(app.cellMaterialArray);
+    app.cellSkyBox = new THREE.Mesh(app.cellSkyGeometry, app.cellSkyMaterial);
+    app.scene.add(app.cellSkyBox);
+
 
     // // obj/mtl human
     // let humanMTLLoader = new THREE.MTLLoader();
@@ -359,65 +402,46 @@ app.init = (font) => {
 
     // wireframe spheres
     const sceneSpheres = [];
-    const spheresArr = [(10**-5),(10**11),(10**13),(10*15)];
+    const spheresArr = [(10 ** -5), (10 ** 11), (10 ** 13), (10 * 15)];
     const sceneSphereMesh = {
-        material:"lambert",
-        color:0xFF0000,
-        wireframe:true,
+        material: "lambert",
+        color: 0xFF0000,
+        wireframe: true,
     };
-    for( var i=0; i<spheresArr.length; i++ ){
-        var sphereParamaters ={
-            dim: { radius: spheresArr[i], triangles:40, other:40 },
-            position: { x:0, y:0, z:0 },
+    for (var i = 0; i < spheresArr.length; i++) {
+        var sphereParamaters = {
+            dim: { radius: spheresArr[i], triangles: 40, other: 40 },
+            position: { x: 0, y: 0, z: 0 },
             mesh: sceneSphereMesh,
-            shadow: { cast:false },
+            shadow: { cast: false },
         }
         sceneSpheres[i] = app.createSphere(sphereParamaters);
         app.scene.add(sceneSpheres[i]);
     };
 
-    // var sphere2p = {
-    //     dim: { radius:0.01, triangles:40, other:40 },
-    //     position: { x:0, y:0, z:0 },
-    //     mesh: { material:"lambert", color:0xFF0000, side:undefined, wireframe:true, map:undefined },
-    //     shadow: { cast:false },
-    // }
-    // app.sphere2 = app.createSphere( sphere2p );
-    // app.sphere2bound = new THREE.BoundingBoxHelper(app.sphere2);
-    // app.scene.add(app.sphere2);
-    // app.scene.add(app.sphere2bound);
+    // // lod test
+    //     var lod = new THREE.LOD();
+    //     for( var j=3; j>0; j-- ){
 
-    // var sphere3p = {
-    //     dim: { radius: 0.000001, triangles: 40, other: 40 },
-    //     position: { x: 0, y: 0, z: 0 },
-    //     mesh: { material: "lambert", color: 0x00FF00, side: undefined, wireframe: true, map: undefined },
-    //     shadow: { cast: false },
+    //         var sphereParamaters ={
+    //             dim: { radius: spheresArr[i], triangles:Math.floor(40*j/3), other:Math.floor(40*j/3) },
+    //             position: { x:0, y:0, z:0 },
+    //             mesh: sceneSphereMesh,
+    //             shadow: { cast:false },
+    //         }
+    //         sceneSpheres[i] = app.createSphere(sphereParamaters);
+    //         lod.addLevel(sceneSpheres[i], (3-j)*10*spheresArr[i]);
+    //         // app.scene.add(sceneSpheres[i]);
+    //     }
+    //     app.scene.add(lod);
+    // };
+    // var lod = new THREE.LOD();
+    // for( var i=0; i<3; i++ ){
+    //     var testSphere = new THREE.SphereBufferGeometry( 1e12, (3-i)*10, (3-i)*10 );
+    //     var testSphereMesh = new THREE.Mesh( testSphere, new THREE.MeshNormalMaterial );
+    //     lod.addLevel(testSphereMesh, 10**(10+i))
     // }
-    // app.sphere3 = app.createSphere(sphere3p);
-    // app.sphere3bound = new THREE.BoundingBoxHelper(app.sphere3);
-    // app.scene.add(app.sphere3);
-    // app.scene.add(app.sphere3bound);
-
-    // var sphere4p = {
-    //     dim: { radius: 10000, triangles: 40, other: 40 },
-    //     position: { x: 0, y: 0, z: 0 },
-    //     mesh: { material: "lambert", color: 0x0000FF, side: undefined, wireframe: true, map: undefined },
-    //     shadow: { cast: false },
-    // }
-    // app.sphere4 = app.createSphere(sphere4p);
-    // app.sphere4bound = new THREE.BoundingBoxHelper(app.sphere4);
-    // app.scene.add(app.sphere4);
-    // app.scene.add(app.sphere4bound);
-
-    // // cubes
-    // var cube1p = {
-    //     dim: { length:4, width:4, height:4 },
-    //     position: { x:-4, y:40, z:0 },
-    //     mesh: { material:"lambert", color:0x00FF00, side:undefined, wireframe:false },
-    //     shadow: {cast:false}
-    // }
-    // app.cube1 = app.createCube(cube1p);
-    // app.scene.add(app.cube1);
+    // app.scene.add(lod);
 
     // // vertexDisplacement;
     // vertexDisplacement = new Float32Array(exampleSphere.attributes.position.count);
