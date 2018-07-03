@@ -20,12 +20,12 @@ app.createCamera = ({
     return camera;
 }
 
-app.createMesh = ({ material, color, side, wireframe, map, normalMap=undefined }) => {
+app.createMesh = ({ material, color, side, wireframe, map, normalMap=undefined, alphaTest=1 }) => {
     switch(material){
         case "lambert":
-        return new THREE.MeshLambertMaterial({color, side, wireframe, map});
+        return new THREE.MeshLambertMaterial({color, side, wireframe, map, alphaTest});
         case "normal":
-        return new THREE.MeshNormalMaterial({color, side, wireframe, map});
+        return new THREE.MeshNormalMaterial({color, side, wireframe, map, alphaTest});
     }
 };
 
@@ -35,9 +35,8 @@ app.createText = ({
     size,
     height,
     mesh,
-    translationFactor:{tx,ty,tz} 
-}) => {
-    console.log(tx, ty, tz);
+    translationFactor:{tx,ty,tz} }) => {
+    // console.log(tx, ty, tz);
     
     const textGeometry = new THREE.TextBufferGeometry(textString,{font,size,height})
     textGeometry.computeBoundingSphere();
@@ -127,7 +126,7 @@ app.animate = () => {
 
     app.stats.update();
     app.earth.rotation.y += 0.01;
-    
+    app.jupiter.rotation.y += 0.01;
     app.sun.rotation.y += app.controls.sunRotationSpeed;
     app.humanlabel.rotation.y = app.controls.humanRotate;
 
@@ -139,7 +138,19 @@ app.animate = () => {
     // };
     // app.example.geometry.attributes.vertexDisplacement.needsUpdate = true;
 
-
+    // camera events
+    app.camera1.distance = Math.sqrt(app.camera1.position.x ** 2
+        + app.camera1.position.y ** 2 + app.camera1.position.z ** 2)
+    if( app.DNA ){
+        app.camera1.distance < 0.0175 ? app.DNA.visible = false : app.DNA.visible = true;
+    }
+    if( app.cell ){
+        app.camera1.distance < 8.6 ? app.cell.visible = false : app.cell.visible = true;
+    }
+    if( app.human ){
+        app.camera1.distance < 1127 ? app.human.visible = false : app.human.visible = true;
+    }
+    // rendering
     app.renderer.render(app.scene, app.camera1);
     requestAnimationFrame(app.animate);
 }

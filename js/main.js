@@ -33,17 +33,17 @@ app.init = (font) => {
     app.scene.add(app.ambientLight);
 
     // spotlight
-    // var spotlight1p = {
-    //     color: 0xFFFFFF,
-    //     position: { x:-50, y:50, z:30 },
-    //     shadow: { bool:false, width:2048, height:2048 }
-    // }
-    // app.spotlight1 = app.createSpotlight(spotlight1p);
-    // app.scene.add(app.spotlight1);
+    var spotlight1p = {
+        color: 0xFFFFFF,
+        position: { x:-50, y:50, z:30 },
+        shadow: { bool:true, width:2048, height:2048 }
+    }
+    app.spotlight1 = app.createSpotlight(spotlight1p);
+    app.scene.add(app.spotlight1);
 
-    app.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    app.directionalLight.position.set(1, 1, 1);
-    app.scene.add(app.dreictionalLight);
+    // app.directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    // app.directionalLight.position.set(1, 1, 1);
+    // app.scene.add(app.dreictionalLight);
 
     // using text function
     var text1p = {
@@ -65,7 +65,7 @@ app.init = (font) => {
         fov: 60,
         aspect: app.width/app.height,
         near: 1e-6,
-        far: 1e20,
+        far: 2.5*1e10,
         position: { x:-30, y:40, z:30 }
     };
     app.camera1 = app.createCamera(camera1p);
@@ -80,6 +80,7 @@ app.init = (font) => {
         app.camera1, app.renderer.domElement
     );
     app.camera1.position.set(200, 200, 200);
+    app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
     // app.camera1_pivot.rotateOnAxis(app.Y_AXIS, 0.01);
 
@@ -113,14 +114,24 @@ app.init = (font) => {
         font: font,
         size: 50,
         height: 50,
-        mesh: { material: "lambert", color: 0x00FF00 },
-        translationFactor: { tx: 0.65, ty: 0.5, tz: -0.7 }
+        mesh: { material: "normal", color: 0x00FF00 },
+        translationFactor: { tx: -0.5, ty: 1.25, tz: -0.3 }
     }
     app.earthlabel = app.createText(earthlabelp);
     app.earthlabel.scale.set(1000,1000,1000);
     app.earthlabel.rotation.y = 0.85;
     app.earthlabel.receiveShadow = true;
+    // app.earthlabel.position.set = { x:6*10e5,y:5*10e5,z:3.8*10e5 }
     app.scene.add(app.earthlabel);
+    // earth lights
+    app.earthSpotlightp = {
+        color: 0xFFFFFF,
+        position: { x: 0, y: 5*10e5, z: -2.5*10e4 },
+        shadow: { bool: true, width: 2048, height: 2048 }
+    }
+    app.earthSpotlight = app.createSpotlight(app.earthSpotlightp);
+    app.scene.add(app.earthSpotlight);
+
 
     // jupiter
     var jupiterP = {
@@ -137,7 +148,7 @@ app.init = (font) => {
         font: font,
         size: 50,
         height: 50,
-        mesh: { material: "lambert", color: 0x00FF00 },
+        mesh: { material: "normal", color: 0x00FF00 },
         translationFactor: { tx: 0.65, ty: 0.5, tz: -0.7 }
     }
     app.jupiterlabel = app.createText(jupiterlabelp);
@@ -161,7 +172,7 @@ app.init = (font) => {
         font: font,
         size: 50,
         height: 50,
-        mesh: { material: "lambert", color: 0x00FF00 },
+        mesh: { material: "normal", color: 0x00FF00 },
         translationFactor: { tx: -0.25, ty: 1.85, tz: 0 }
     }
     app.sunlabel = app.createText(sunlabelp);
@@ -185,20 +196,21 @@ app.init = (font) => {
 
 
     // obj/mtl test (r2d2)
-    var mtlLoader = new THREE.MTLLoader();
-    mtlLoader.setTexturePath('/scales/models/');
-    mtlLoader.setPath('/scales/models/');
-    mtlLoader.load('r2-d2.mtl', function (materials) {
-        materials.preload();
-        var objLoader = new THREE.OBJLoader();
-        objLoader.setMaterials(materials);
-        objLoader.setPath('/scales/models/');
-        objLoader.load('r2-d2.obj', object => {
-            object.position.y -= 60;
-            object.scale.set(0.75*1e10,0.75*1e10,0.75*1e10);
-            app.scene.add(object);
-        });
-    });
+    // var mtlLoader = new THREE.MTLLoader();
+    // mtlLoader.setTexturePath('/scales/models/');
+    // mtlLoader.setPath('/scales/models/');
+    // mtlLoader.load('r2-d2.mtl', function (materials) {
+    //     materials.preload();
+    //     var objLoader = new THREE.OBJLoader();
+    //     objLoader.setMaterials(materials);
+    //     objLoader.setPath('/scales/models/');
+    //     objLoader.load('r2-d2.obj', object => {
+    //         app.r2d2 = object;
+    //         object.position.y -= 60;
+    //         object.scale.set(0.75*1e10,0.75*1e10,0.75*1e10);
+    //         app.scene.add(object);
+    //     });
+    // });
 
     // human test texture
     app.manager = new THREE.LoadingManager();
@@ -223,6 +235,7 @@ app.init = (font) => {
                 child.material.map = app.humanTexture;
             }
         });
+        app.human = object;
         object.scale.set(1000,1000,1000);
         object.position.y = -15000;
         object.rotation.y = 0.74;
@@ -235,27 +248,33 @@ app.init = (font) => {
         font: font,
         size: 1000,
         height: 500,
-        mesh: { material: "lambert", color: 0x00FF00 },
-        translationFactor: { tx:-1,ty:3.1,tz:0 }
+        mesh: { material: "normal", color: 0x00FF00 },
+        translationFactor: { tx:-1,ty:1,tz:0 }
     }
     app.humanlabel = app.createText(humanlabelp);
-    app.humanlabel.scale.set(1, 1, 1);
-    app.humanlabel.rotation.y = 0.85;
+    app.humanlabel.scale.set(2.5, 2.5, 2.5);
+    app.humanlabel.rotation.y = 0.74;
     app.humanlabel.receiveShadow = true;
     app.scene.add(app.humanlabel);
-    
+    // human lights
+    app.humanSpotlightp = {
+        color: 0xFFFFFF,
+        position: { x: -744, y: 38740, z: -1773 },
+        shadow: { bool: true, width: 2048, height: 2048 }
+    }
+    app.humanSpotlight = app.createSpotlight(app.humanSpotlightp);
+    app.scene.add(app.humanSpotlight);
+
+
     // DNA collada model
-    let DNA;
-    app.DNALoadingManager = new THREE.LoadingManager(function () {
-        app.scene.add(DNA);
-    });
     app.DNALoader = new THREE.ColladaLoader(app.DNALoadingManager);
     app.DNALoader.load('models/DNA.dae', function(collada) {
-        DNA = collada.scene;
-        DNA.scale.set(0.001,0.001,0.001);
-        DNA.rotation.z = (11/8)*Math.PI/2;
+        app.DNA = collada.scene;
+        app.scene.add(app.DNA);
+        app.DNA.scale.set(0.001,0.001,0.001);
+        app.DNA.rotation.z = (11/8)*Math.PI/2;
         // DNA.rotation.x = (1/2)*Math.PI/2;
-        DNA.position.y = -0.0005;
+        app.DNA.position.y = -0.0005;
     });
     // DNA label
     var DNAlabelp = {
@@ -263,28 +282,26 @@ app.init = (font) => {
         font: font,
         size: 50,
         height:50,
-        mesh: { material:"lambert", color: 0x00FF00 },
+        mesh: { material:"normal", color: 0x00FF00 },
         translationFactor: { tx:0.65,ty:0.5,tz:-0.7 }
     }
     app.DNAlabel = app.createText(DNAlabelp);
     app.DNAlabel.scale.set(0.001,0.001,0.001);
     app.DNAlabel.rotation.y = 0.85;
     app.DNAlabel.receiveShadow = true;
+    app.DNAlabel.position = { x:-0.186, y:0.182, z:-0.365 };
     app.scene.add(app.DNAlabel);
 
     // cell collada model
-    let cell;
-    app.cellLoadingManager = new THREE.LoadingManager(function () {
-        cell.position.x = 18.5;
-        cell.position.y = -12.5;
-        cell.position.z = -10.5;
-        cell.rotation.y = 0.20;
-        app.scene.add(cell);
-    });
     app.cellLoader = new THREE.ColladaLoader(app.cellLoadingManager);
     app.cellLoader.load('models/cell.dae', function (collada) {
-        cell = collada.scene;
-        cell.scale.set(0.001,0.001,0.001);
+        app.cell = collada.scene;
+        app.cell.position.x = 18.5;
+        app.cell.position.y = -12.5;
+        app.cell.position.z = -10.5;
+        app.cell.rotation.y = 0.20;
+        app.scene.add(app.cell);
+        app.cell.scale.set(0.001,0.001,0.001);
     });
     // cell label
     var celllabelp = {
@@ -292,7 +309,7 @@ app.init = (font) => {
         font: font,
         size: 50,
         height: 50,
-        mesh: { material: "lambert", color: 0x00FF00 },
+        mesh: { material: "normal", color: 0x00FF00 },
         translationFactor: { tx: -1, ty: 1, tz: 0 }
     }
     app.celllabel = app.createText(celllabelp);
@@ -300,7 +317,14 @@ app.init = (font) => {
     app.celllabel.rotation.y = 0.74;
     app.celllabel.receiveShadow = true;
     app.scene.add(app.celllabel);
-
+    // cell lights
+    app.cellSpotlightp = {
+        color: 0xFFFFFF,
+        position: { x: 11.3, y: 300, z: 20 },
+        shadow: { bool: true, width: 2048, height: 2048 }
+    }
+    app.cellSpotlight = app.createSpotlight(app.cellSpotlightp);
+    app.scene.add(app.cellSpotlight);
 
     // // obj/mtl human
     // let humanMTLLoader = new THREE.MTLLoader();
@@ -335,15 +359,12 @@ app.init = (font) => {
 
     // wireframe spheres
     const sceneSpheres = [];
-    const spheresArr = [];
+    const spheresArr = [(10**-5),(10**11),(10**13),(10*15)];
     const sceneSphereMesh = {
         material:"lambert",
         color:0xFF0000,
         wireframe:true,
     };
-    for( var i=-5; i<20; i+=2 ){
-        spheresArr.push(10**i);
-    }
     for( var i=0; i<spheresArr.length; i++ ){
         var sphereParamaters ={
             dim: { radius: spheresArr[i], triangles:40, other:40 },
@@ -353,7 +374,7 @@ app.init = (font) => {
         }
         sceneSpheres[i] = app.createSphere(sphereParamaters);
         app.scene.add(sceneSpheres[i]);
-    }
+    };
 
     // var sphere2p = {
     //     dim: { radius:0.01, triangles:40, other:40 },
@@ -405,6 +426,9 @@ app.init = (font) => {
     // }
     // // must use buffer geometry only
     // exampleSphere.addAttribute('vertexDisplacement', new THREE.BufferAttribute(vertexDisplacement, 1));
+
+
+
 
     // OTHER
     // add <canvas> element created by renderer to DOM
