@@ -128,14 +128,16 @@ app.animate = () => {
     app.stats.update();
     app.earth.rotation.y += 0.01;
     
-    app.sun.rotation.y += 0.01;
+    app.sun.rotation.y += app.controls.sunRotationSpeed;
+    app.humanlabel.rotation.y = app.controls.humanRotate;
 
-    delta +=0.1;
-    app.example.material.uniforms.delta.value = 0.5*Math.sin(delta)*0.5;
-    for( var i=0; i<vertexDisplacement.length; i++ ){
-        vertexDisplacement[i] = 0.5+Math.sin(i*delta) * 0.25;
-    };
-    app.example.geometry.attributes.vertexDisplacement.needsUpdate = true;
+    // // vertex fragments & vertex
+    // delta +=0.1;
+    // app.example.material.uniforms.delta.value = 0.5*Math.sin(delta)*0.5;
+    // for( var i=0; i<vertexDisplacement.length; i++ ){
+    //     vertexDisplacement[i] = 0.5+Math.sin(i*delta) * 0.25;
+    // };
+    // app.example.geometry.attributes.vertexDisplacement.needsUpdate = true;
 
 
     app.renderer.render(app.scene, app.camera1);

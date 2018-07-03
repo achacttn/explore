@@ -1,6 +1,18 @@
 var app = app || {};
 app.step = 0;
+
+// gui fields
+app.controls = {
+    sunRotationSpeed: 0.01,
+    humanRotate: 0.5,
+};
+
 app.init = (font) => {
+    // gui controls
+    app.gui = new dat.GUI();
+    app.gui.add(app.controls, 'sunRotationSpeed', 0, 0.1);
+    app.gui.add(app.controls, 'humanRotate', 0, 10);
+
     app.scene = new THREE.Scene();
 
     app.width = window.innerWidth;
@@ -55,12 +67,24 @@ app.init = (font) => {
         near: 1e-6,
         far: 1e20,
         position: { x:-30, y:40, z:30 }
-    }
+    };
     app.camera1 = app.createCamera(camera1p);
+    // rotate camera
+    // app.camera1_pivot = new THREE.Object3D()
+    // app.Y_AXIS = new THREE.Vector3(0, 1, 0);
+    // app.scene.add(app.camera1_pivot);
+    // app.camera1_pivot.add(app.camera1);
+
     app.camera1.lookAt(app.scene.position);
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
+    app.camera1.position.set(200, 200, 200);
+    // app.camera1.lookAt(app.camera1_pivot.position);
+    // app.camera1_pivot.rotateOnAxis(app.Y_AXIS, 0.01);
+
+
+
     // var camera1Helper = new THREE.CameraHelper(app.camera1);
     // app.scene.add(camera1Helper);
 
@@ -83,6 +107,20 @@ app.init = (font) => {
     }
     app.earth = app.createSphere(earthP);
     app.scene.add(app.earth);
+    // Earth label
+    var earthlabelp = {
+        textString: "EARTH",
+        font: font,
+        size: 50,
+        height: 50,
+        mesh: { material: "lambert", color: 0x00FF00 },
+        translationFactor: { tx: 0.65, ty: 0.5, tz: -0.7 }
+    }
+    app.earthlabel = app.createText(earthlabelp);
+    app.earthlabel.scale.set(1000,1000,1000);
+    app.earthlabel.rotation.y = 0.85;
+    app.earthlabel.receiveShadow = true;
+    app.scene.add(app.earthlabel);
 
     // jupiter
     var jupiterP = {
@@ -93,6 +131,20 @@ app.init = (font) => {
     }
     app.jupiter = app.createSphere(jupiterP);
     app.scene.add(app.jupiter);
+    // Jupiter label
+    var jupiterlabelp = {
+        textString: "JUPITER",
+        font: font,
+        size: 50,
+        height: 50,
+        mesh: { material: "lambert", color: 0x00FF00 },
+        translationFactor: { tx: 0.65, ty: 0.5, tz: -0.7 }
+    }
+    app.jupiterlabel = app.createText(jupiterlabelp);
+    app.jupiterlabel.scale.set(100000, 100000, 100000);
+    app.jupiterlabel.rotation.y = 0.85;
+    app.jupiterlabel.receiveShadow = true;
+    app.scene.add(app.jupiterlabel);
 
     // sun (need to do something with shaders)
     var sunP = {
@@ -103,20 +155,33 @@ app.init = (font) => {
     }
     app.sun = app.createSphere(sunP);
     app.scene.add(app.sun);
+    // sun label
+    var sunlabelp = {
+        textString: "SUN",
+        font: font,
+        size: 50,
+        height: 50,
+        mesh: { material: "lambert", color: 0x00FF00 },
+        translationFactor: { tx: -0.25, ty: 1.85, tz: 0 }
+    }
+    app.sunlabel = app.createText(sunlabelp);
+    app.sunlabel.scale.set(10000000, 10000000, 10000000);
+    app.sunlabel.rotation.y = 0.85;
+    app.sunlabel.receiveShadow = true;
+    app.scene.add(app.sunlabel);
 
-
-    // android model test
-    var jsonLoader = new THREE.JSONLoader();
-    jsonLoader.load('models/android.js', ( geometry, materials ) => {
-        var material = new THREE.MeshFaceMaterial(materials);
-        // var material = new THREE.MeshNormalMaterial(materials);
-        app.android = new THREE.Mesh(geometry, material);
-        app.android.scale.set(15500,15500,15500);
-        app.android.position.y = 15000;
-        app.android.position.x = 95000;
-        app.android.position.z = 95000;
-        app.scene.add(app.android);
-    });
+    // // android model test
+    // var jsonLoader = new THREE.JSONLoader();
+    // jsonLoader.load('models/android.js', ( geometry, materials ) => {
+    //     var material = new THREE.MeshFaceMaterial(materials);
+    //     // var material = new THREE.MeshNormalMaterial(materials);
+    //     app.android = new THREE.Mesh(geometry, material);
+    //     app.android.scale.set(15500,15500,15500);
+    //     app.android.position.y = 15000;
+    //     app.android.position.x = 95000;
+    //     app.android.position.z = 95000;
+    //     app.scene.add(app.android);
+    // });
 
 
     // obj/mtl test (r2d2)
@@ -160,6 +225,7 @@ app.init = (font) => {
         });
         object.scale.set(1000,1000,1000);
         object.position.y = -15000;
+        object.rotation.y = 0.74;
         app.scene.add(object);
     }, onProgress, onError);
 
@@ -174,6 +240,7 @@ app.init = (font) => {
     }
     app.humanlabel = app.createText(humanlabelp);
     app.humanlabel.scale.set(1, 1, 1);
+    app.humanlabel.rotation.y = 0.85;
     app.humanlabel.receiveShadow = true;
     app.scene.add(app.humanlabel);
     
@@ -186,14 +253,32 @@ app.init = (font) => {
     app.DNALoader.load('models/DNA.dae', function(collada) {
         DNA = collada.scene;
         DNA.scale.set(0.001,0.001,0.001);
-    })
+        DNA.rotation.z = (11/8)*Math.PI/2;
+        // DNA.rotation.x = (1/2)*Math.PI/2;
+        DNA.position.y = -0.0005;
+    });
+    // DNA label
+    var DNAlabelp = {
+        textString: "DNA STRAND",
+        font: font,
+        size: 50,
+        height:50,
+        mesh: { material:"lambert", color: 0x00FF00 },
+        translationFactor: { tx:0.65,ty:0.5,tz:-0.7 }
+    }
+    app.DNAlabel = app.createText(DNAlabelp);
+    app.DNAlabel.scale.set(0.001,0.001,0.001);
+    app.DNAlabel.rotation.y = 0.85;
+    app.DNAlabel.receiveShadow = true;
+    app.scene.add(app.DNAlabel);
 
     // cell collada model
     let cell;
     app.cellLoadingManager = new THREE.LoadingManager(function () {
-        cell.position.x = 15.5;
+        cell.position.x = 18.5;
         cell.position.y = -12.5;
-        cell.position.z = -12.5;
+        cell.position.z = -10.5;
+        cell.rotation.y = 0.20;
         app.scene.add(cell);
     });
     app.cellLoader = new THREE.ColladaLoader(app.cellLoadingManager);
@@ -201,6 +286,21 @@ app.init = (font) => {
         cell = collada.scene;
         cell.scale.set(0.001,0.001,0.001);
     });
+    // cell label
+    var celllabelp = {
+        textString: "CELL",
+        font: font,
+        size: 50,
+        height: 50,
+        mesh: { material: "lambert", color: 0x00FF00 },
+        translationFactor: { tx: -1, ty: 1, tz: 0 }
+    }
+    app.celllabel = app.createText(celllabelp);
+    app.celllabel.scale.set(1, 1, 1);
+    app.celllabel.rotation.y = 0.74;
+    app.celllabel.receiveShadow = true;
+    app.scene.add(app.celllabel);
+
 
     // // obj/mtl human
     // let humanMTLLoader = new THREE.MTLLoader();
@@ -218,19 +318,19 @@ app.init = (font) => {
     //     })
     // });
 
-    // vertex and fragment shader
-    uniforms = {
-        delta: { value:0 }
-    };
-    app.exampleMaterial = new THREE.ShaderMaterial({
-        uniforms: uniforms,
-        vertexShader: document.getElementById('vertexShader').textContent,
-        fragmentShader: document.getElementById('fragmentShader').textContent
-    });
-    const exampleSphere = new THREE.SphereBufferGeometry(20, 40, 40);
-    app.example = new THREE.Mesh( exampleSphere, app.exampleMaterial );
-    app.example.position.set( 50, 50, 50 );
-    app.scene.add(app.example);
+    // // vertex and fragment shader
+    // uniforms = {
+    //     delta: { value:0 }
+    // };
+    // app.exampleMaterial = new THREE.ShaderMaterial({
+    //     uniforms: uniforms,
+    //     vertexShader: document.getElementById('vertexShader').textContent,
+    //     fragmentShader: document.getElementById('fragmentShader').textContent
+    // });
+    // const exampleSphere = new THREE.SphereBufferGeometry(20, 40, 40);
+    // app.example = new THREE.Mesh( exampleSphere, app.exampleMaterial );
+    // app.example.position.set( 50, 50, 50 );
+    // app.scene.add(app.example);
 
 
     // wireframe spheres
@@ -298,13 +398,13 @@ app.init = (font) => {
     // app.cube1 = app.createCube(cube1p);
     // app.scene.add(app.cube1);
 
-    // vertexDisplacement;
-    vertexDisplacement = new Float32Array(exampleSphere.attributes.position.count);
-    for( var i=0; i<vertexDisplacement.length; i++ ){
-        vertexDisplacement[i] = Math.sin(i);
-    }
-    // must use buffer geometry only
-    exampleSphere.addAttribute('vertexDisplacement', new THREE.BufferAttribute(vertexDisplacement, 1));
+    // // vertexDisplacement;
+    // vertexDisplacement = new Float32Array(exampleSphere.attributes.position.count);
+    // for( var i=0; i<vertexDisplacement.length; i++ ){
+    //     vertexDisplacement[i] = Math.sin(i);
+    // }
+    // // must use buffer geometry only
+    // exampleSphere.addAttribute('vertexDisplacement', new THREE.BufferAttribute(vertexDisplacement, 1));
 
     // OTHER
     // add <canvas> element created by renderer to DOM
