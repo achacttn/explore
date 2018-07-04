@@ -246,29 +246,51 @@ app.init = (font) => {
     });
     app.galaxyRadius = 500;
     app.galaxyGeometry = new THREE.BufferGeometry();
-    app.galaxyParticles = 1000;
+    app.galaxyParticles = 50000;
     app.galaxyPositions = [];
     app.galaxyColors = [];
     app.galaxySizes = [];
     
-
-
-    // random distribution in a circle
-    // t = 2 * pi * random()
-    // u = random() + random()
-    // r = if u > 1 then 2 - u else u
-    // [r * cos(t), r * sin(t)]
-
     app.galaxyColor = new THREE.Color();
 
+
+    // // plane bulge
+    // const planeDist = {};
+    // // // y bulge
+    // const yDist = {};
+    // // bulge function (approximate Gaussian distribution)
+    // for (var i = -50; i < 50; i++) {
+    //     planeDist[i] = 0, yDist[i] = 0;
+    // };
+    // // console.log('planeDist: ', planeDist, 'yDist: ', yDist);
+
+    // const sample = (samples, distObj, n = 10000) => {
+    //     for (var i = 0; i < n; i++) {
+    //         let a = 0;
+    //         for (var j = 0; j < samples; j++) {
+    //             a += parseInt(100 * Math.random());
+    //         }
+    //         a /= samples;
+    //         a = parseInt(a);
+    //         a -= 50;
+    //         distObj[a]++;
+    //     }
+    // }
+    // sample(6, planeDist);
+    // sample(6, yDist);
+    // // const currentYobj = {};
+    // console.log('planeDist: ', planeDist, 'yDist: ', yDist);
+    // var sqrt2 = Math.sqrt(2);
+    
     for( var i=0; i<app.galaxyParticles; i++ ){
-        var randRad = app.galaxyRadius*Math.sqrt(Math.random());
-        var randAng = 2*Math.PI*Math.random();
-        app.galaxyPositions.push( randRad*Math.cos(randAng) );
-        // app.galaxyPositions.push(app.galaxyRadius*( Math.sqrt(Math.random()) )*Math.cos(2*Math.random()*Math.PI));
-        app.galaxyPositions.push(0);
-        app.galaxyPositions.push( randRad*Math.sin(randAng) );
-        // app.galaxyPositions.push(app.galaxyRadius * (Math.sqrt(Math.random()) )*Math.sin(2*Math.random()*Math.PI));
+        var randRad = app.galaxyRadius * Math.sqrt(Math.random());
+        var randAng = 2 * Math.PI * Math.random();
+        var currentX = randRad*Math.cos(randAng);
+        var currentZ = randRad*Math.sin(randAng);
+
+        app.galaxyPositions.push( currentX );
+        app.galaxyPositions.push( ((app.galaxyRadius**2)-((500-randRad)**2))/app.galaxyRadius );
+        app.galaxyPositions.push( currentZ );
         // custom distribution for galaxy later
 
 
@@ -278,6 +300,7 @@ app.init = (font) => {
         app.galaxyColors.push( 1,1,1 );
         app.galaxySizes.push(20);
     }
+    // console.log(currentYobj);
     app.galaxyGeometry.addAttribute('position', new THREE.Float32BufferAttribute(app.galaxyPositions, 3));
     app.galaxyGeometry.addAttribute('color', new THREE.Float32BufferAttribute(app.galaxyColors, 3));
     app.galaxyGeometry.addAttribute('size', new THREE.Float32BufferAttribute(app.galaxySizes, 1).setDynamic(true));

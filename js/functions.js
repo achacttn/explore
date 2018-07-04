@@ -168,14 +168,14 @@ app.animate = () => {
         app.jupiterSkyBox.visible = app.camera1.distance < 3e9 ? true : false;
     }
     
-    // galaxy dynamic particles
-    app.time = Date.now() * 0.005;
-    app.galaxyParticleSystem.rotation.y += 0.01;
-    app.sizes = app.galaxyGeometry.attributes.size.array;
-    for (var i = 0; i < app.galaxyParticles; i++) {
-        app.sizes[i] = 100 * (1 + Math.sin(0.1 * i + app.time));
-    }
-    app.galaxyGeometry.attributes.size.needsUpdate = true;
+    // // galaxy dynamic particles
+    // app.time = Date.now() * 0.005;
+    // app.galaxyParticleSystem.rotation.y += 0.01;
+    // app.sizes = app.galaxyGeometry.attributes.size.array;
+    // for (var i = 0; i < app.galaxyParticles; i++) {
+    //     app.sizes[i] = 100 * (1 + Math.sin(0.1 * i + app.time));
+    // }
+    // app.galaxyGeometry.attributes.size.needsUpdate = true;
 
     // rendering
     app.renderer.render(app.scene, app.camera1);
