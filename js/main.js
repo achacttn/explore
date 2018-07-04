@@ -66,7 +66,7 @@ app.init = (font) => {
         fov: 60,
         aspect: app.width/app.height,
         near: 1e-6,
-        far: 2.5*1e10,
+        far: 2.5*1e18,
         position: { x:-30, y:40, z:30 }
     };
     app.camera1 = app.createCamera(camera1p);
@@ -80,7 +80,8 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(1.4*(10e3), 1.4*(10e3), 1.4*(10e3));
+    app.camera1.position.set(1400,1400,1400) // cell
+    // app.camera1.position.set(5*1e9, 5*1e9, 5*1e9); // sun
     app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
     // app.camera1_pivot.rotateOnAxis(app.Y_AXIS, 0.01);
@@ -160,7 +161,7 @@ app.init = (font) => {
     app.jupiterImagePrefix = "img/solar_system/solar_system_";
     app.jupiterDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
     app.jupiterImageSuffix = ".tga";
-    app.jupiterSkyGeometry = new THREE.CubeGeometry(1.4*1e9, 1.4*1e9, 1.4*1e9);
+    app.jupiterSkyGeometry = new THREE.CubeGeometry(0.9*1e9, 0.9*1e9, 0.9*1e9);
     app.jupiterMaterialArray = [];
     for (var i = 0; i < 6; i++)
         app.jupiterMaterialArray.push(new THREE.MeshBasicMaterial({
@@ -195,7 +196,16 @@ app.init = (font) => {
     app.sunlabel.receiveShadow = true;
     app.scene.add(app.sunlabel);
 
-    // blackhole skybox
+    // blackhole shell
+    var blackholeP = {
+        dim: { radius: 1e11, triangles: 40, other: 40 },
+        position: { x: 0, y: 0, z: 0 },
+        mesh: { material: "lambert", color: 0xFFFFFF, side: undefined, wireframe: true, map: undefined },
+        shadow: { cast: false },
+    }
+    app.blackhole = app.createSphere(blackholeP);
+    app.scene.add(app.blackhole);
+    // blackhole+galaxy skybox
     app.blackholeImagePrefix = "img/nebula/nebula_";
     app.blackholeDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
     app.blackholeImageSuffix = ".tga";
@@ -210,6 +220,62 @@ app.init = (font) => {
     app.blackholeSkyBox = new THREE.Mesh(app.blackholeSkyGeometry, app.blackholeSkyMaterial);
     app.scene.add(app.blackholeSkyBox);
 
+    // galactic centre
+    var galaxyP = {
+        dim: { radius: 0.5*1e13, triangles: 40, other: 40 },
+        position: { x: 0, y: 0, z: 0 },
+        mesh: { material: "normal", color: 0xFFFFFF, side: THREE.FrontSide, wireframe: true, map: undefined },
+        shadow: { cast: false },
+    }
+    app.galaxy = app.createSphere(galaxyP);
+    app.scene.add(app.galaxy);
+    // galaxy shaders
+    app.galaxyUniforms = {
+        texture: { value: new THREE.TextureLoader().load('img/spark.png') }
+    }
+    app.galaxyShaderMaterial = new THREE.ShaderMaterial({
+        uniforms: app.galaxyUniforms,
+        vertexShader: document.getElementById('vertexshader').textContent,
+        fragmentShader: document.getElementById('fragmentshader').textContent,
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: true,
+        vertexColors: true
+    });
+    app.galaxyRadius = 500;
+    app.galaxyGeometry = new THREE.BufferGeometry();
+    app.galaxyParticles = 10000;
+    app.galaxyPositions = [];
+    app.galaxyColors = [];
+    app.galaxySizes = [];
+    
+
+
+    // random distribution in a circle
+
+    app.galaxyColor = new THREE.Color();
+    for( var i=0; i<app.galaxyParticles; i++ ){
+        app.galaxyPositions.push(app.galaxyRadius*(Math.random()+Math.random())*Math.cos(2*Math.random()*Math.PI))
+        app.galaxyPositions.push(0);
+        app.galaxyPositions.push(app.galaxyRadius*(Math.random() + Math.random()) * Math.sin(2 * Math.random() * Math.PI))
+        // custom distribution for galaxy later
+        
+
+        // galaxy particle colors
+        // app.galaxyColor.setHSL( i/app.galaxyParticles, 1.0, 0.5 );
+        // app.galaxyColors.push(app.galaxyColor.r, app.galaxyColor.g, app.galaxyColor.b);
+        app.galaxyColors.push( 1,1,1 );
+        app.galaxySizes.push(20);
+    }
+    app.galaxyGeometry.addAttribute('position', new THREE.Float32BufferAttribute(app.galaxyPositions, 3));
+    app.galaxyGeometry.addAttribute('color', new THREE.Float32BufferAttribute(app.galaxyColors, 3));
+    app.galaxyGeometry.addAttribute('size', new THREE.Float32BufferAttribute(app.galaxySizes, 1).setDynamic(true));
+    app.galaxyParticleSystem = new THREE.Points(app.galaxyGeometry, app.galaxyShaderMaterial);
+    // app.galaxyParticleSystem.position.set(0,0,0);
+    // app.galaxyParticleSystem.position.set( -0.5*app.galaxyRadius, 0, -0.5*app.galaxyRadius );
+
+    // app.galaxyParticleSystem.scale.set(100000);
+    app.scene.add(app.galaxyParticleSystem);
 
     // // android model test
     // var jsonLoader = new THREE.JSONLoader();
@@ -335,6 +401,20 @@ app.init = (font) => {
     app.DNAlabel.receiveShadow = true;
     app.DNAlabel.position = { x:-0.186, y:0.182, z:-0.365 };
     app.scene.add(app.DNAlabel);
+    // DNA skybox
+    app.DNAImagePrefix = "img/DNA/dna";
+    app.DNADirections = ["1", "1", "1", "1", "1", "1"];
+    app.DNAImageSuffix = ".jpg";
+    app.DNASkyGeometry = new THREE.CubeGeometry(7, 7, 7);
+    app.DNAMaterialArray = [];
+    for (var i = 0; i < 6; i++)
+        app.DNAMaterialArray.push(new THREE.MeshBasicMaterial({
+            map: THREE.ImageUtils.loadTexture(app.DNAImagePrefix + app.DNADirections[i] + app.DNAImageSuffix),
+            side: THREE.BackSide
+        }));
+    app.DNASkyMaterial = new THREE.MeshFaceMaterial(app.DNAMaterialArray);
+    app.DNASkyBox = new THREE.Mesh(app.DNASkyGeometry, app.DNASkyMaterial);
+    app.scene.add(app.DNASkyBox);
 
     // cell collada model
     app.cellLoader = new THREE.ColladaLoader(app.cellLoadingManager);
@@ -370,10 +450,10 @@ app.init = (font) => {
     app.cellSpotlight = app.createSpotlight(app.cellSpotlightp);
     app.scene.add(app.cellSpotlight);
     // cell skybox
-    app.cellImagePrefix = "img/blood/blood";
-    app.cellDirections = ["1", "1", "1", "2", "2", "2"];
+    app.cellImagePrefix = "img/bloodv/bloodv";
+    app.cellDirections = ["1", "1", "1", "0", "0", "0"];
     app.cellImageSuffix = ".jpg";
-    app.cellSkyGeometry = new THREE.CubeGeometry(1200, 1200, 1200);
+    app.cellSkyGeometry = new THREE.CubeGeometry(1500, 1500, 1500);
     app.cellMaterialArray = [];
     for (var i = 0; i < 6; i++)
         app.cellMaterialArray.push(new THREE.MeshBasicMaterial({
@@ -401,6 +481,7 @@ app.init = (font) => {
     //     })
     // });
 
+
     // // vertex and fragment shader
     // uniforms = {
     //     delta: { value:0 }
@@ -414,6 +495,13 @@ app.init = (font) => {
     // app.example = new THREE.Mesh( exampleSphere, app.exampleMaterial );
     // app.example.position.set( 50, 50, 50 );
     // app.scene.add(app.example);
+    // // vertexDisplacement;
+    // vertexDisplacement = new Float32Array(exampleSphere.attributes.position.count);
+    // for( var i=0; i<vertexDisplacement.length; i++ ){
+    //     vertexDisplacement[i] = Math.sin(i);
+    // }
+    // // must use buffer geometry only
+    // exampleSphere.addAttribute('vertexDisplacement', new THREE.BufferAttribute(vertexDisplacement, 1));
 
 
     // wireframe spheres
@@ -458,17 +546,6 @@ app.init = (font) => {
     //     lod.addLevel(testSphereMesh, 10**(10+i))
     // }
     // app.scene.add(lod);
-
-    // // vertexDisplacement;
-    // vertexDisplacement = new Float32Array(exampleSphere.attributes.position.count);
-    // for( var i=0; i<vertexDisplacement.length; i++ ){
-    //     vertexDisplacement[i] = Math.sin(i);
-    // }
-    // // must use buffer geometry only
-    // exampleSphere.addAttribute('vertexDisplacement', new THREE.BufferAttribute(vertexDisplacement, 1));
-
-
-
 
     // OTHER
     // add <canvas> element created by renderer to DOM

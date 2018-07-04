@@ -93,32 +93,32 @@ app.createSphere = ({
     return sphere;
 };
 
-app.createParticleSystem = () => {
-    const particles = new THREE.Geometry();
-    const dist = app.controls.particleDistribution
-    for (let i = 0; i < app.controls.numParticles; i++) {
-        const particle = new THREE.Vector3(
-            THREE.Math.randInt(-dist, dist),
-            100,
-            THREE.Math.randInt(-dist, dist),
-        );
-        particle.vx = 0;
-        particle.vy = 0;
-        particle.vz = 0;
+// app.createParticleSystem = () => {
+//     const particles = new THREE.Geometry();
+//     const dist = app.controls.particleDistribution
+//     for (let i = 0; i < app.controls.numParticles; i++) {
+//         const particle = new THREE.Vector3(
+//             THREE.Math.randInt(-dist, dist),
+//             100,
+//             THREE.Math.randInt(-dist, dist),
+//         );
+//         particle.vx = 0;
+//         particle.vy = 0;
+//         particle.vz = 0;
 
-        particles.vertices.push(particle);
-    }
-    const particleMaterial = new THREE.PointsMaterial({
-        color: 0xFFFFFF,
-        size: 8,
-        map: THREE.ImageUtils.loadTexture('img/snowflake.png'),
-        blending: THREE.NormalBlending,
-        transparent: true,
-        alphaTest: 0.5
-    });
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    return particleSystem;
-};
+//         particles.vertices.push(particle);
+//     }
+//     const particleMaterial = new THREE.PointsMaterial({
+//         color: 0xFFFFFF,
+//         size: 8,
+//         map: THREE.ImageUtils.loadTexture('img/snowflake.png'),
+//         blending: THREE.NormalBlending,
+//         transparent: true,
+//         alphaTest: 0.5
+//     });
+//     const particleSystem = new THREE.Points(particles, particleMaterial);
+//     return particleSystem;
+// };
 
 // render loop
 var delta = 0;
@@ -150,17 +150,29 @@ app.animate = () => {
     if( app.human ){
         app.camera1.distance < 1127 ? app.human.visible = false : app.human.visible = true;
     }
+
     // camera vs skybox
-    if( app.humanSkyBox ){
-        app.camera1.distance > 100000 ? app.humanSkyBox.visible = false : app.humanSkyBox.visible = true;
+    if( app.DNASkyBox ){
+        app.DNASkyBox.visible = app.camera1.distance < 10.5 ? true : false;
     }
     if (app.cellSkyBox) {
-        app.camera1.distance < 8.5 ? app.cellSkyBox.visible = false : app.cellSkyBox.visible = true;
+        app.cellSkyBox.visible = app.camera1.distance < 1200 ? true : false;
     }
-    // if( app.blackholeSkyBox ){
-    //     app.camera1.distance > 1.5*10e9 ?
-    // }
-    // 941078764
+    if( app.humanSkyBox ){
+        app.humanSkyBox.visible = app.camera1.distance < 100000 ? true : false;
+    }
+    if( app.jupiterSkyBox ){
+        app.jupiterSkyBox.visible = app.camera1.distance < 3e9 ? true : false;
+    }
+    
+    // galaxy dynamic particles
+    app.time = Date.now() * 0.005;
+    app.galaxyParticleSystem.rotation.y += 0.01;
+    app.sizes = app.galaxyGeometry.attributes.size.array;
+    for (var i = 0; i < app.galaxyParticles; i++) {
+        app.sizes[i] = 10 * (1 + Math.sin(0.1 * i + app.time));
+    }
+    app.galaxyGeometry.attributes.size.needsUpdate = true;
 
     // rendering
     app.renderer.render(app.scene, app.camera1);
