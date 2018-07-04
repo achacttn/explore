@@ -150,6 +150,9 @@ app.animate = () => {
     if( app.human ){
         app.camera1.distance < 1127 ? app.human.visible = false : app.human.visible = true;
     }
+    // if( app.galaxyParticleSystem ){
+    //     app.camera1.distance < 500 ? app.galaxyParticleSystem.visible = true : app.galaxyParticleSystem.
+    // }
 
     // camera vs skybox
     if( app.DNASkyBox ){
@@ -170,7 +173,7 @@ app.animate = () => {
     app.galaxyParticleSystem.rotation.y += 0.01;
     app.sizes = app.galaxyGeometry.attributes.size.array;
     for (var i = 0; i < app.galaxyParticles; i++) {
-        app.sizes[i] = 10 * (1 + Math.sin(0.1 * i + app.time));
+        app.sizes[i] = 100 * (1 + Math.sin(0.1 * i + app.time));
     }
     app.galaxyGeometry.attributes.size.needsUpdate = true;
 

@@ -5,6 +5,7 @@ app.step = 0;
 app.controls = {
     sunRotationSpeed: 0.01,
     humanRotate: 0.5,
+    // galaxyRadius: 500,
 };
 
 app.init = (font) => {
@@ -12,6 +13,7 @@ app.init = (font) => {
     app.gui = new dat.GUI();
     app.gui.add(app.controls, 'sunRotationSpeed', 0, 0.1);
     app.gui.add(app.controls, 'humanRotate', 0, 10);
+    // app.gui.add(app.controls, 'galaxyRadius', 500, 2000);
 
     app.scene = new THREE.Scene();
     var TGALoader = new THREE.TGALoader();
@@ -80,7 +82,7 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(1400,1400,1400) // cell
+    app.camera1.position.set(1446,1446,1446) // cell
     // app.camera1.position.set(5*1e9, 5*1e9, 5*1e9); // sun
     app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
@@ -244,7 +246,7 @@ app.init = (font) => {
     });
     app.galaxyRadius = 500;
     app.galaxyGeometry = new THREE.BufferGeometry();
-    app.galaxyParticles = 10000;
+    app.galaxyParticles = 1000;
     app.galaxyPositions = [];
     app.galaxyColors = [];
     app.galaxySizes = [];
@@ -252,18 +254,27 @@ app.init = (font) => {
 
 
     // random distribution in a circle
+    // t = 2 * pi * random()
+    // u = random() + random()
+    // r = if u > 1 then 2 - u else u
+    // [r * cos(t), r * sin(t)]
 
     app.galaxyColor = new THREE.Color();
+
     for( var i=0; i<app.galaxyParticles; i++ ){
-        app.galaxyPositions.push(app.galaxyRadius*(Math.random()+Math.random())*Math.cos(2*Math.random()*Math.PI))
+        var randRad = app.galaxyRadius*Math.sqrt(Math.random());
+        var randAng = 2*Math.PI*Math.random();
+        app.galaxyPositions.push( randRad*Math.cos(randAng) );
+        // app.galaxyPositions.push(app.galaxyRadius*( Math.sqrt(Math.random()) )*Math.cos(2*Math.random()*Math.PI));
         app.galaxyPositions.push(0);
-        app.galaxyPositions.push(app.galaxyRadius*(Math.random() + Math.random()) * Math.sin(2 * Math.random() * Math.PI))
+        app.galaxyPositions.push( randRad*Math.sin(randAng) );
+        // app.galaxyPositions.push(app.galaxyRadius * (Math.sqrt(Math.random()) )*Math.sin(2*Math.random()*Math.PI));
         // custom distribution for galaxy later
-        
+
 
         // galaxy particle colors
-        // app.galaxyColor.setHSL( i/app.galaxyParticles, 1.0, 0.5 );
-        // app.galaxyColors.push(app.galaxyColor.r, app.galaxyColor.g, app.galaxyColor.b);
+        app.galaxyColor.setHSL( i/app.galaxyParticles, 1.0, 0.5 );
+        app.galaxyColors.push(app.galaxyColor.r, app.galaxyColor.g, app.galaxyColor.b);
         app.galaxyColors.push( 1,1,1 );
         app.galaxySizes.push(20);
     }
@@ -271,10 +282,8 @@ app.init = (font) => {
     app.galaxyGeometry.addAttribute('color', new THREE.Float32BufferAttribute(app.galaxyColors, 3));
     app.galaxyGeometry.addAttribute('size', new THREE.Float32BufferAttribute(app.galaxySizes, 1).setDynamic(true));
     app.galaxyParticleSystem = new THREE.Points(app.galaxyGeometry, app.galaxyShaderMaterial);
-    // app.galaxyParticleSystem.position.set(0,0,0);
-    // app.galaxyParticleSystem.position.set( -0.5*app.galaxyRadius, 0, -0.5*app.galaxyRadius );
 
-    // app.galaxyParticleSystem.scale.set(100000);
+    // app.galaxyParticleSystem.scale.set({x:3,y:3,z:3});
     app.scene.add(app.galaxyParticleSystem);
 
     // // android model test
