@@ -259,7 +259,7 @@ app.init = (font) => {
     // // // y bulge
     // const yDist = {};
     // // bulge function (approximate Gaussian distribution)
-    // for (var i = -50; i < 50; i++) {
+    // for (var i = 0; i < 100; i++) {
     //     planeDist[i] = 0, yDist[i] = 0;
     // };
     // // console.log('planeDist: ', planeDist, 'yDist: ', yDist);
@@ -272,32 +272,36 @@ app.init = (font) => {
     //         }
     //         a /= samples;
     //         a = parseInt(a);
-    //         a -= 50;
     //         distObj[a]++;
     //     }
     // }
     // sample(6, planeDist);
     // sample(6, yDist);
-    // // const currentYobj = {};
     // console.log('planeDist: ', planeDist, 'yDist: ', yDist);
-    // var sqrt2 = Math.sqrt(2);
-    
+
+    // currentY = ( planeDist )=>{
+    //     return (app.galaxyRadius*yDist[parseInt((planeDist/app.galaxyRadius)*100)])/4
+    // };
+
     for( var i=0; i<app.galaxyParticles; i++ ){
         var randRad = app.galaxyRadius * Math.sqrt(Math.random());
         var randAng = 2 * Math.PI * Math.random();
         var currentX = randRad*Math.cos(randAng);
         var currentZ = randRad*Math.sin(randAng);
 
+        // x position
         app.galaxyPositions.push( currentX );
-        app.galaxyPositions.push( ((app.galaxyRadius**2)-((500-randRad)**2))/app.galaxyRadius );
+        // y position attempt
+        app.galaxyPositions.push( 500-randRad );
+        // app.galaxyPositions.push( currentY( randRad ) )
+        // app.galaxyPositions.push( (((app.galaxyRadius**2)-((500-randRad)**2)) /app.galaxyRadius)*( Math.random() > 0.5 ? 1 : -1 ) );
+        // z position
         app.galaxyPositions.push( currentZ );
-        // custom distribution for galaxy later
 
-
-        // galaxy particle colors
+        // // galaxy particle colors
         app.galaxyColor.setHSL( i/app.galaxyParticles, 1.0, 0.5 );
         app.galaxyColors.push(app.galaxyColor.r, app.galaxyColor.g, app.galaxyColor.b);
-        app.galaxyColors.push( 1,1,1 );
+        // app.galaxyColors.push( 1,1,1 );
         app.galaxySizes.push(20);
     }
     // console.log(currentYobj);
