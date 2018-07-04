@@ -82,7 +82,7 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(1446,1446,1446) // cell
+    app.camera1.position.set(10000,10000,10000) // cell
     // app.camera1.position.set(5*1e9, 5*1e9, 5*1e9); // sun
     app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
@@ -244,9 +244,9 @@ app.init = (font) => {
         transparent: true,
         vertexColors: true
     });
-    app.galaxyRadius = 500;
+    app.galaxyRadius = 50000;
     app.galaxyGeometry = new THREE.BufferGeometry();
-    app.galaxyParticles = 50000;
+    app.galaxyParticles = 600000;
     app.galaxyPositions = [];
     app.galaxyColors = [];
     app.galaxySizes = [];
@@ -282,8 +282,9 @@ app.init = (font) => {
     // currentY = ( planeDist )=>{
     //     return (app.galaxyRadius*yDist[parseInt((planeDist/app.galaxyRadius)*100)])/4
     // };
-
+    var yAxisDistributor = 1;
     for( var i=0; i<app.galaxyParticles; i++ ){
+        yAxisDistributor*= -1;
         var randRad = app.galaxyRadius * Math.sqrt(Math.random());
         var randAng = 2 * Math.PI * Math.random();
         var currentX = randRad*Math.cos(randAng);
@@ -292,13 +293,13 @@ app.init = (font) => {
         // x position
         app.galaxyPositions.push( currentX );
         // y position attempt
-        app.galaxyPositions.push( 500-randRad );
+        app.galaxyPositions.push( yAxisDistributor*Math.random()*((app.galaxyRadius-randRad)/4) );
         // app.galaxyPositions.push( currentY( randRad ) )
         // app.galaxyPositions.push( (((app.galaxyRadius**2)-((500-randRad)**2)) /app.galaxyRadius)*( Math.random() > 0.5 ? 1 : -1 ) );
         // z position
         app.galaxyPositions.push( currentZ );
 
-        // // galaxy particle colors
+        // // // galaxy particle colors
         app.galaxyColor.setHSL( i/app.galaxyParticles, 1.0, 0.5 );
         app.galaxyColors.push(app.galaxyColor.r, app.galaxyColor.g, app.galaxyColor.b);
         // app.galaxyColors.push( 1,1,1 );
@@ -310,7 +311,7 @@ app.init = (font) => {
     app.galaxyGeometry.addAttribute('size', new THREE.Float32BufferAttribute(app.galaxySizes, 1).setDynamic(true));
     app.galaxyParticleSystem = new THREE.Points(app.galaxyGeometry, app.galaxyShaderMaterial);
 
-    // app.galaxyParticleSystem.scale.set({x:3,y:3,z:3});
+    // app.galaxyParticleSystem.scale.set(20,20,20);
     app.scene.add(app.galaxyParticleSystem);
 
     // // android model test
