@@ -26,7 +26,7 @@ app.init = (font) => {
     app.renderer = new THREE.WebGLRenderer({ antialias:true, logarithmicDepthBuffer:true, alpha: true });
     app.renderer.setPixelRatio(window.devicePixelRatio);
     app.renderer.domElement.style.position = 'absolute';
-    app.renderer.domElement.style.zIndex = 1;
+    
     app.renderer.domElement.style.top = 0;
     app.renderer.setSize(app.width, app.height);
     app.renderer.setClearColor(0x000000);
@@ -153,7 +153,7 @@ app.init = (font) => {
         position: { x:-3e5,y:0.5*1e5,z:0 },
         // opacity must be set to 0 for page to be transparent.
         // color of mesh should also be set to black
-        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
+        mesh: { material: "basic", color: 0xFF0000, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
         
         shadow: { cast: false },
     }
@@ -161,6 +161,7 @@ app.init = (font) => {
     app.earthPage.rotation.set(0,0.54,0);
     // create css3d object for earthPage
     app.earthPageCSSObject = app.createCSSObject(earthPageP.dim.width, earthPageP.dim.height, earthPageP.position, app.earthPage.rotation, 'https://en.wikipedia.org/wiki/Earth' );
+    app.scene.add(app.earthPage);
     app.CSS3Dscene.add(app.earthPageCSSObject);
 
 
@@ -483,7 +484,10 @@ app.init = (font) => {
     app.humanPage = app.createPlane(humanPageP);
     app.humanPage.rotation.set(0, 0.54, 0);
     // create css3d object for humanPage
-    app.humanPageCSSObject = app.createCSSObject(humanPageP.dim.width, humanPageP.dim.height, humanPageP.position, app.humanPage.rotation, 'https://en.wikipedia.org/wiki/Human');
+    console.log(111111111111111);
+    app.humanPageCSSObject = app.createCSSObject(humanPageP.dim.width, 
+        humanPageP.dim.height, humanPageP.position, app.humanPage.rotation, 'https://en.wikipedia.org/wiki/Human');
+    console.log(2222222222222, app.humanPageCSSObject);
     app.CSS3Dscene.add(app.humanPageCSSObject);
 
     // DNA collada model
@@ -687,8 +691,10 @@ app.init = (font) => {
     //     lod.addLevel(testSphereMesh, 10**(10+i))
     // }
     // app.scene.add(lod);
-    
     document.getElementById('output').appendChild(app.CSS3DRenderer.domElement);
+
+    app.renderer.domElement.style.zIndex = 1;
+
     app.CSS3DRenderer.domElement.appendChild(app.renderer.domElement);
     // document.getElementById('output').appendChild(app.renderer.domElement);
     app.stats = app.addStats();
