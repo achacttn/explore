@@ -95,6 +95,26 @@ app.createSphere = ({
     return sphere;
 };
 
+app.createCSSObject = ( width, height, position, rotation, url )=>{
+    var html = [
+        `<div style="width:${width}px; height:${height}px;">`,
+        `<iframe src="${url}" width="${width}" height="${height}">`,
+        `</iframe>`,
+        `</div>`
+    ].join('\n');
+    var div = document.createElement('div');
+    $(div).html(html);
+    var CSSObject = new THREE.CSS3DObject(div);
+    CSSObject.position.x = position.x;
+    CSSObject.position.y = position.y;
+    CSSObject.position.z = position.z;
+    CSSObject.rotation.x = rotation.x;
+    CSSObject.rotation.y = rotation.y;
+    CSSObject.rotation.z = rotation.z;
+
+    return CSSObject;
+}
+
 // app.createParticleSystem = () => {
 //     const particles = new THREE.Geometry();
 //     const dist = app.controls.particleDistribution
@@ -130,7 +150,7 @@ app.animate = () => {
     app.earth.rotation.y += 0.01;
     app.jupiter.rotation.y += 0.01;
     app.sun.rotation.y += app.controls.sunRotationSpeed;
-    app.humanlabel.rotation.y = app.controls.humanRotate;
+    // app.humanlabel.rotation.y = app.controls.humanRotate;
 
     // // vertex fragments & vertex
     // delta +=0.1;
@@ -232,22 +252,90 @@ app.animate = () => {
 
     // rendering
     app.renderer.render(app.scene, app.camera1);
+    app.CSS3DRenderer.render(app.CSS3Dscene, app.camera1);
     requestAnimationFrame(app.animate);
 }
 
-// for human body 1302
-app.toggleVar = -1;
-app.toggleInfo = (key)=>{
-    if( key==="i" ){
-        app.toggleVar*=-1;
-        if (app.toggleVar>0) {
-            app.scene.add(app.earthPage);
-        } else {
-            app.scene.remove(app.earthPage);
-        }
+// page toggle
+var earthInfo = -1;
+app.toggleEarth = () => {
+    earthInfo *= -1;
+    if (earthInfo > 0) {
+        app.scene.add(app.earthPage);
+    } else {
+        app.scene.remove(app.earthPage);
     }
 }
+var jupiterInfo = -1;
+app.toggleJupiter = () => {
+    jupiterInfo *= -1;
+    if (jupiterInfo > 0) {
+        app.scene.add(app.jupiterPage);
+    } else {
+        app.scene.remove(app.jupiterPage);
+    }
+}
+var sunInfo = -1;
+app.toggleSun = ()=>{
+    sunInfo*= -1;
+    if(sunInfo > 0){
+        app.scene.add(app.sunPage);
+    } else {
+        app.scene.remove(app.sunPage);
+    }
+}
+var galaxyInfo = -1;
+app.toggleGalaxy = ()=>{
+    galaxyInfo*= -1;
+    if(galaxyInfo > 0){
+        app.scene.add(app.galaxyPage);
+    } else {
+        app.scene.remove(app.galaxyPage);
+    }
+}
+var humanInfo = -1;
+app.toggleHuman = ()=>{
+    humanInfo*= -1;
+    if(humanInfo > 0){
+        app.scene.add(app.humanPage);
+    } else {
+        app.scene.remove(app.humanPage);
+    }
+}
+var cellInfo = -1;
+app.toggleCell = ()=>{
+    cellInfo*= -1;
+    if(cellInfo > 0){
+        app.scene.add(app.cellPage);
+    } else {
+        app.scene.remove(app.cellPage);
+    }
+}
+var DNAInfo = -1;
+app.toggleDNA = ()=>{
+    DNAInfo*= -1;
+    if(DNAInfo > 0){
+        app.scene.add(app.DNAPage);
+    } else {
+        app.scene.remove(app.DNAPage);
+    }
+}
+
+
 window.addEventListener("keypress", (e)=>{
-    console.log(e)
-    app.toggleInfo(e.key);
+    if(e.key==="e"){
+        app.toggleEarth();
+    } else if(e.key==="j"){
+        app.toggleJupiter();
+    } else if(e.key==="s"){
+        app.toggleSun();
+    } else if(e.key==="g"){
+        app.toggleGalaxy();
+    } else if(e.key==="h"){
+        app.toggleHuman();
+    } else if(e.key==="c"){
+        app.toggleCell();
+    } else if(e.key==="d"){
+        app.toggleDNA();
+    }
 })

@@ -15,13 +15,15 @@ app.init = (font) => {
     app.gui.add(app.controls, 'humanRotate', 0, 10);
 
     app.scene = new THREE.Scene();
+    app.CSS3Dscene = new THREE.Scene();
     var TGALoader = new THREE.TGALoader();
     var TextureLoader = new THREE.TextureLoader();
 
     app.width = window.innerWidth;
     app.height = window.innerHeight;
 
-    app.renderer = new THREE.WebGLRenderer({ antialias:true, logarithmicDepthBuffer:true });
+    // webgl renderer
+    app.renderer = new THREE.WebGLRenderer({ antialias:true, logarithmicDepthBuffer:true, alpha: true });
     app.renderer.setPixelRatio(window.devicePixelRatio);
     app.renderer.domElement.style.position = 'absolute';
     app.renderer.domElement.style.zIndex = 1;
@@ -30,6 +32,12 @@ app.init = (font) => {
     app.renderer.setClearColor(0x000000);
     app.renderer.shadowMap.enabled = true;
     app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // css3d renderer
+    app.CSS3DRenderer = new THREE.CSS3DRenderer();
+    app.CSS3DRenderer.setSize(app.width, app.height);
+    app.CSS3DRenderer.domElement.style.position = 'absolute';
+    app.CSS3DRenderer.domElement.style.top = 0;
+
 
     app.axes = new THREE.AxesHelper(1e18);
     app.scene.add(app.axes);
@@ -63,7 +71,7 @@ app.init = (font) => {
     }
     app.text1 = app.createText(text1p);
     app.text1.scale.set(0.000001,0.000001,0.000001);
-    app.text1.rotation.y = 0.85;
+    // app.text1.rotation.y = 0.85;
     app.text1.receiveShadow = true;
     app.scene.add( app.text1 );
 
@@ -87,7 +95,8 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(4e5,4e5,4e5);
+    app.camera1.position.set(9e3,3e5,6e5) // demo start
+    // app.camera1.position.set(0,4e5,4e5);
     // 108446902065.69307
     // app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
@@ -122,11 +131,11 @@ app.init = (font) => {
         size: 50,
         height: 50,
         mesh: { material: "normal", color: 0x00FF00 },
-        translationFactor: { tx: -0.5, ty: 1.25, tz: -0.3 }
+        translationFactor: { tx: -1, ty: 1.25, tz: -0.3 }
     }
     app.earthlabel = app.createText(earthlabelp);
     app.earthlabel.scale.set(1000,1000,1000);
-    app.earthlabel.rotation.y = 0.85;
+    // app.earthlabel.rotation.y = 0;
     app.earthlabel.receiveShadow = true;
     // app.earthlabel.position.set = { x:6*10e5,y:5*10e5,z:3.8*10e5 }
     app.scene.add(app.earthlabel);
@@ -141,43 +150,18 @@ app.init = (font) => {
     // earth page
     var earthPageP = {
         dim: { width: 2.5e5, height: 4e5 },
-        position: { x:0,y:0,z:0 },
-        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 0 },
+        position: { x:-3e5,y:0.5*1e5,z:0 },
+        // opacity must be set to 0 for page to be transparent.
+        // color of mesh should also be set to black
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
+        
         shadow: { cast: false },
     }
     app.earthPage = app.createPlane(earthPageP);
-    app.earthPage.rotation.y = 0.74;
-    app.earthPage.position.set(-2e5, 0.5*1e5, 2e5);
-    
-    // // earth page rendering
-    
-
-    function createCssObject(w, h, position, rotation, url) {
-        var html = [
-            '<div style="width:' + w + 'px; height:' + h + 'px;">',
-            '<iframe src="' + url + '" width="' + w + '" height="' + h + '">',
-            '</iframe>',
-            '</div>'
-        ].join('\n');
-        var div = document.createElement('div');
-        $(div).html(html);
-        var cssObject = new THREE.CSS3DObject(div);
-        cssObject.position.x = position.x;
-        cssObject.position.y = position.y;
-        cssObject.position.z = position.z;
-        cssObject.rotation.x = rotation.x;
-        cssObject.rotation.y = rotation.y;
-        cssObject.rotation.z = rotation.z;
-        return cssObject;
-    }
-    // function createCssRenderer() {
-    //     var cssRenderer = new THREE.CSS3DRenderer();
-    //     cssRenderer.setSize(window.innerWidth, window.innerHeight);
-    //     cssRenderer.domElement.style.position = 'absolute';
-    //     glRenderer.domElement.style.zIndex = 0;
-    //     cssRenderer.domElement.style.top = 0;
-    //     return cssRenderer;
-    // }
+    app.earthPage.rotation.set(0,0.54,0);
+    // create css3d object for earthPage
+    app.earthPageCSSObject = app.createCSSObject(earthPageP.dim.width, earthPageP.dim.height, earthPageP.position, app.earthPage.rotation, 'https://en.wikipedia.org/wiki/Earth' );
+    app.CSS3Dscene.add(app.earthPageCSSObject);
 
 
     // jupiter
@@ -196,11 +180,11 @@ app.init = (font) => {
         size: 50,
         height: 50,
         mesh: { material: "normal", color: 0x00FF00 },
-        translationFactor: { tx: 0.65, ty: 0.5, tz: -0.7 }
+        translationFactor: { tx: 0, ty: 1.25, tz: -0.35 }
     }
     app.jupiterlabel = app.createText(jupiterlabelp);
     app.jupiterlabel.scale.set(100000, 100000, 100000);
-    app.jupiterlabel.rotation.y = 0.85;
+    // app.jupiterlabel.rotation.y = 0.85;
     app.jupiterlabel.receiveShadow = true;
     app.scene.add(app.jupiterlabel);
     // jupiter skybox
@@ -217,6 +201,21 @@ app.init = (font) => {
     app.jupiterSkyMaterial = new THREE.MeshFaceMaterial(app.jupiterMaterialArray);
     app.jupiterSkyBox = new THREE.Mesh(app.jupiterSkyGeometry, app.jupiterSkyMaterial);
     app.scene.add(app.jupiterSkyBox);
+    // jupiter page
+    var jupiterPageP = {
+        dim: { width: 2.5e7, height: 4e7 },
+        position: { x: -3e7, y: 0.5 * 1e7, z: 0 },
+        // opacity must be set to 0 for page to be transparent.
+        // color of mesh should also be set to black
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
+
+        shadow: { cast: false },
+    }
+    app.jupiterPage = app.createPlane(jupiterPageP);
+    app.jupiterPage.rotation.set(0, 0.54, 0);
+    // create css3d object for jupiterPage
+    app.jupiterPageCSSObject = app.createCSSObject(jupiterPageP.dim.width, jupiterPageP.dim.height, jupiterPageP.position, app.jupiterPage.rotation, 'https://en.wikipedia.org/wiki/Jupiter');
+    app.CSS3Dscene.add(app.jupiterPageCSSObject);
 
     // sun (need to do something with shaders)
     var sunP = {
@@ -238,15 +237,30 @@ app.init = (font) => {
     }
     app.sunlabel = app.createText(sunlabelp);
     app.sunlabel.scale.set(10000000, 10000000, 10000000);
-    app.sunlabel.rotation.y = 0.85;
+    // app.sunlabel.rotation.y = 0.85;
     app.sunlabel.receiveShadow = true;
     app.scene.add(app.sunlabel);
+    // sun page
+    var sunPageP = {
+        dim: { width: 2.5e9, height: 4e9 },
+        position: { x: -3e9, y: 0.5 * 1e9, z: 0 },
+        // opacity must be set to 0 for page to be transparent.
+        // color of mesh should also be set to black
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
+
+        shadow: { cast: false },
+    }
+    app.sunPage = app.createPlane(sunPageP);
+    app.sunPage.rotation.set(0, 0.54, 0);
+    // create css3d object for sunPage
+    app.sunPageCSSObject = app.createCSSObject(sunPageP.dim.width, sunPageP.dim.height, sunPageP.position, app.sunPage.rotation, 'https://en.wikipedia.org/wiki/Sun');
+    app.CSS3Dscene.add(app.sunPageCSSObject);
 
     // blackhole shell
     var blackholeP = {
         dim: { radius: 1e11, triangles: 40, other: 40 },
         position: { x: 0, y: 0, z: 0 },
-        mesh: { material: "lambert", color: 0xFFFFFF, side: undefined, wireframe: true, map: undefined },
+        mesh: { material: "normal", color: 0xFFFFFF, side: undefined, wireframe: true, map: undefined },
         shadow: { cast: false },
     }
     app.blackhole = app.createSphere(blackholeP);
@@ -338,7 +352,7 @@ app.init = (font) => {
         // x position
         app.galaxyPositions.push( currentX );
         // y position attempt
-        app.galaxyPositions.push( yAxisDistributor*Math.random()*((app.galaxyRadius-randRad)/8) );
+        app.galaxyPositions.push( yAxisDistributor*Math.random()*((app.galaxyRadius-randRad)/6) );
         // app.galaxyPositions.push( currentY( randRad ) )
         // app.galaxyPositions.push( (((app.galaxyRadius**2)-((500-randRad)**2)) /app.galaxyRadius)*( Math.random() > 0.5 ? 1 : -1 ) );
         // z position
@@ -416,7 +430,7 @@ app.init = (font) => {
         app.human = object;
         object.scale.set(1000,1000,1000);
         object.position.y = -15000;
-        object.rotation.y = 0.74;
+        // object.rotation.y = 0.74;
         app.scene.add(object);
     }, onProgress, onError);
 
@@ -427,11 +441,11 @@ app.init = (font) => {
         size: 1000,
         height: 500,
         mesh: { material: "normal", color: 0x00FF00 },
-        translationFactor: { tx:-1,ty:1,tz:0 }
+        translationFactor: { tx:-1,ty:1.25,tz:0 }
     }
     app.humanlabel = app.createText(humanlabelp);
     app.humanlabel.scale.set(2.5, 2.5, 2.5);
-    app.humanlabel.rotation.y = 0.85;
+    app.humanlabel.rotation.y = 0;
     app.humanlabel.receiveShadow = true;
     app.scene.add(app.humanlabel);
     // human lights
@@ -456,7 +470,21 @@ app.init = (font) => {
     app.humanSkyMaterial = new THREE.MeshFaceMaterial(app.humanMaterialArray);
     app.humanSkyBox = new THREE.Mesh(app.humanSkyGeometry, app.humanSkyMaterial);
     app.scene.add(app.humanSkyBox);
+    // human page
+    var humanPageP = {
+        dim: { width: 5000, height: 8000 },
+        position: { x: -6000, y: 1000, z: 0 },
+        // opacity must be set to 0 for page to be transparent.
+        // color of mesh should also be set to black
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
 
+        shadow: { cast: false },
+    }
+    app.humanPage = app.createPlane(humanPageP);
+    app.humanPage.rotation.set(0, 0.54, 0);
+    // create css3d object for humanPage
+    app.humanPageCSSObject = app.createCSSObject(humanPageP.dim.width, humanPageP.dim.height, humanPageP.position, app.humanPage.rotation, 'https://en.wikipedia.org/wiki/Human');
+    app.CSS3Dscene.add(app.humanPageCSSObject);
 
     // DNA collada model
     app.DNALoader = new THREE.ColladaLoader(app.DNALoadingManager);
@@ -466,6 +494,7 @@ app.init = (font) => {
         app.DNA.scale.set(0.001,0.001,0.001);
         app.DNA.rotation.z = (11/8)*Math.PI/2;
         // DNA.rotation.x = (1/2)*Math.PI/2;
+        // app.DNA.rotation.y = (Math.PI)/4
         app.DNA.position.y = -0.0005;
     });
     // DNA label
@@ -475,11 +504,11 @@ app.init = (font) => {
         size: 50,
         height:50,
         mesh: { material:"normal", color: 0x00FF00 },
-        translationFactor: { tx:0.65,ty:0.5,tz:-0.7 }
+        translationFactor: { tx:0.85,ty:2.5,tz:-0.7 }
     }
     app.DNAlabel = app.createText(DNAlabelp);
     app.DNAlabel.scale.set(0.001,0.001,0.001);
-    app.DNAlabel.rotation.y = 0.85;
+    // app.DNAlabel.rotation.y = 0.85;
     app.DNAlabel.receiveShadow = true;
     app.DNAlabel.position = { x:-0.186, y:0.182, z:-0.365 };
     app.scene.add(app.DNAlabel);
@@ -497,6 +526,21 @@ app.init = (font) => {
     app.DNASkyMaterial = new THREE.MeshFaceMaterial(app.DNAMaterialArray);
     app.DNASkyBox = new THREE.Mesh(app.DNASkyGeometry, app.DNASkyMaterial);
     app.scene.add(app.DNASkyBox);
+    // DNA page
+    var DNAPageP = {
+        dim: { width: 0.1, height: 0.16 },
+        position: { x: -0.1, y: 0.1, z: 0 },
+        // opacity must be set to 0 for page to be transparent.
+        // color of mesh should also be set to black
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
+
+        shadow: { cast: false },
+    }
+    app.DNAPage = app.createPlane(DNAPageP);
+    app.DNAPage.rotation.set(0, 0.54, 0);
+    // create css3d object for DNAPage
+    app.DNAPageCSSObject = app.createCSSObject(DNAPageP.dim.width, DNAPageP.dim.height, DNAPageP.position, app.DNAPage.rotation, 'https://en.wikipedia.org/wiki/DNA');
+    app.CSS3Dscene.add(app.DNAPageCSSObject);
 
     // cell collada model
     app.cellLoader = new THREE.ColladaLoader(app.cellLoadingManager);
@@ -505,7 +549,7 @@ app.init = (font) => {
         app.cell.position.x = 18.5;
         app.cell.position.y = -12.5;
         app.cell.position.z = -10.5;
-        app.cell.rotation.y = 0.20;
+        // app.cell.rotation.y = 0.20;
         app.scene.add(app.cell);
         app.cell.scale.set(0.001,0.001,0.001);
     });
@@ -520,7 +564,7 @@ app.init = (font) => {
     }
     app.celllabel = app.createText(celllabelp);
     app.celllabel.scale.set(1, 1, 1);
-    app.celllabel.rotation.y = 0.74;
+    // app.celllabel.rotation.y = 0.74;
     app.celllabel.receiveShadow = true;
     app.scene.add(app.celllabel);
     // cell lights
@@ -545,6 +589,21 @@ app.init = (font) => {
     app.cellSkyMaterial = new THREE.MeshFaceMaterial(app.cellMaterialArray);
     app.cellSkyBox = new THREE.Mesh(app.cellSkyGeometry, app.cellSkyMaterial);
     app.scene.add(app.cellSkyBox);
+    // cell page
+    var cellPageP = {
+        dim: { width: 50, height: 80 },
+        position: { x: -200, y: 40, z: 0 },
+        // opacity must be set to 0 for page to be transparent.
+        // color of mesh should also be set to black
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
+
+        shadow: { cast: false },
+    }
+    app.cellPage = app.createPlane(cellPageP);
+    app.cellPage.rotation.set(0, 0.54, 0);
+    // create css3d object for cellPage
+    app.cellPageCSSObject = app.createCSSObject(cellPageP.dim.width, cellPageP.dim.height, cellPageP.position, app.cellPage.rotation, 'https://en.wikipedia.org/wiki/Cell');
+    app.CSS3Dscene.add(app.cellPageCSSObject);
 
 
     // // obj/mtl human
@@ -628,18 +687,11 @@ app.init = (font) => {
     //     lod.addLevel(testSphereMesh, 10**(10+i))
     // }
     // app.scene.add(lod);
-
-    // OTHER
-    // add <canvas> element created by renderer to DOM
     
-    // // main render dom element
-    // app.renderer.domElement.style.position = 'absolute';
-    // app.renderer.domElement.style.top = 0;
-    // app.renderer.domElement.style.zIndex = 1;
-    document.getElementById('output').appendChild(app.renderer.domElement);
-
+    document.getElementById('output').appendChild(app.CSS3DRenderer.domElement);
+    app.CSS3DRenderer.domElement.appendChild(app.renderer.domElement);
+    // document.getElementById('output').appendChild(app.renderer.domElement);
     app.stats = app.addStats();
-
     app.animate();
 };
 
