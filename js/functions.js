@@ -173,7 +173,7 @@ app.animate = () => {
     app.galaxyParticleSystem.rotation.y += 0.01;
     app.sizes = app.galaxyGeometry.attributes.size.array;
     for (var i = 0; i < app.galaxyParticles; i++) {
-        app.sizes[i] = 100 * (1 + Math.sin(0.1 * i + app.time));
+        app.sizes[i] = 1000000 * (1 + Math.sin(0.1 * i + app.time));
     }
     app.galaxyGeometry.attributes.size.needsUpdate = true;
 
@@ -183,3 +183,4 @@ app.animate = () => {
 }
 
 // for human body 1302
+

@@ -82,7 +82,7 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(10000,10000,10000) // cell
+    app.camera1.position.set(60000000,60000000,60000000) // cell
     // app.camera1.position.set(5*1e9, 5*1e9, 5*1e9); // sun
     app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
@@ -244,9 +244,9 @@ app.init = (font) => {
         transparent: true,
         vertexColors: true
     });
-    app.galaxyRadius = 50000;
+    app.galaxyRadius = 15000000;
     app.galaxyGeometry = new THREE.BufferGeometry();
-    app.galaxyParticles = 600000;
+    app.galaxyParticles = 200000;
     app.galaxyPositions = [];
     app.galaxyColors = [];
     app.galaxySizes = [];
@@ -311,9 +311,9 @@ app.init = (font) => {
     app.galaxyGeometry.addAttribute('size', new THREE.Float32BufferAttribute(app.galaxySizes, 1).setDynamic(true));
     app.galaxyParticleSystem = new THREE.Points(app.galaxyGeometry, app.galaxyShaderMaterial);
 
-    // app.galaxyParticleSystem.scale.set(20,20,20);
+    app.galaxyParticleSystem.scale.set(4,4,4);
     app.scene.add(app.galaxyParticleSystem);
-
+    // app.galaxyParticleSystem.visible = false;
     // // android model test
     // var jsonLoader = new THREE.JSONLoader();
     // jsonLoader.load('models/android.js', ( geometry, materials ) => {
@@ -543,7 +543,7 @@ app.init = (font) => {
 
     // wireframe spheres
     const sceneSpheres = [];
-    const spheresArr = [(10 ** -5), (10 ** 11), (10 ** 13), (10 * 15)];
+    const spheresArr = [(10 ** 13)];
     const sceneSphereMesh = {
         material: "lambert",
         color: 0xFF0000,
