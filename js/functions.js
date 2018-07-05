@@ -20,12 +20,14 @@ app.createCamera = ({
     return camera;
 }
 
-app.createMesh = ({ material, color, side, wireframe, map, normalMap=undefined, alphaTest=1 }) => {
+app.createMesh = ({ material, color, side, wireframe, map, normalMap=undefined, opacity, alphaTest=1 }) => {
     switch(material){
         case "lambert":
-        return new THREE.MeshLambertMaterial({color, side, wireframe, map, alphaTest});
+        return new THREE.MeshLambertMaterial({color, side, wireframe, map, opacity, alphaTest});
         case "normal":
-        return new THREE.MeshNormalMaterial({color, side, wireframe, map, alphaTest});
+        return new THREE.MeshNormalMaterial({color, side, wireframe, map, opacity, alphaTest});
+        case "basic":
+        return new THREE.MeshBasicMaterial({color, side, wireframe, map, opacity, alphaTest});
     }
 };
 
@@ -142,29 +144,29 @@ app.animate = () => {
     app.camera1.distance = Math.sqrt(app.camera1.position.x**2+app.camera1.position.y**2+app.camera1.position.z**2)
     
     // object rendering
-    if( app.galaxyParticleSystem && app.blackhole && app.sun ){
-        app.camera1.distance < 1e9 ? app.scene.remove(app.galaxyParticleSystem) && app.scene.remove(app.blackhole) && app.scene.remove(app.sun)
-        :app.scene.add(app.galaxyParticleSystem) && app.scene.add(app.blackhole) && app.scene.add(app.sun);
+    if( app.galaxyParticleSystem && app.blackhole && app.sun && app.sunlabel ){
+        app.camera1.distance < 1e9 ? app.scene.remove(app.galaxyParticleSystem) && app.scene.remove(app.blackhole) && app.scene.remove(app.sun) && app.scene.remove(app.sunlabel)
+        :app.scene.add(app.galaxyParticleSystem) && app.scene.add(app.blackhole) && app.scene.add(app.sun) && app.scene.add(app.sunlabel);
     }
-    if( app.jupiter ){
-        app.camera1.distance < 1e7 ? app.scene.remove(app.jupiter)
-        :app.scene.add(app.jupiter);
+    if( app.jupiter && app.jupiterlabel ){
+        app.camera1.distance < 1e7 ? app.scene.remove(app.jupiter) && app.scene.remove(app.jupiterlabel)
+        :app.scene.add(app.jupiter) && app.scene.add(app.jupiterlabel);
     }
-    if( app.earth ){
-        app.camera1.distance < 90000 ? app.scene.remove(app.earth)
-        :app.scene.add(app.earth);
+    if( app.earth && app.earthlabel ){
+        app.camera1.distance < 90000 ? app.scene.remove(app.earth) && app.scene.remove(app.earthlabel)
+        :app.scene.add(app.earth) && app.scene.add(app.earthlabel);
     }
-    if( app.human ){
-        app.camera1.distance < 1200 ? app.scene.remove(app.human)
-        :app.scene.add(app.human);
+    if( app.human && app.humanlabel ){
+        app.camera1.distance < 1200 ? app.scene.remove(app.human) && app.scene.remove(app.humanlabel)
+        :app.scene.add(app.human) && app.scene.add(app.humanlabel);
     }
-    if( app.cell ){
-        app.camera1.distance < 9.11 ? app.scene.remove(app.cell)
-        :app.scene.add(app.cell);
+    if( app.cell && app.celllabel ){
+        app.camera1.distance < 9.11 ? app.scene.remove(app.cell) && app.scene.remove(app.celllabel)
+        :app.scene.add(app.cell) && app.scene.add(app.celllabel);
     }
-    if( app.DNA ){
-        app.camera1.distance < 0.0085 ? app.scene.remove(app.DNA)
-        :app.scene.add(app.DNA);
+    if( app.DNA && app.DNAlabel ){
+        app.camera1.distance < 0.0085 ? app.scene.remove(app.DNA) && app.scene.remove(app.DNAlabel)
+        :app.scene.add(app.DNA) && app.scene.add(app.DNAlabel);
     }
 
 
@@ -234,7 +236,18 @@ app.animate = () => {
 }
 
 // for human body 1302
-
+app.toggleVar = -1;
+app.toggleInfo = (key)=>{
+    if( key==="i" ){
+        app.toggleVar*=-1;
+        if (app.toggleVar>0) {
+            app.scene.add(app.earthPage);
+        } else {
+            app.scene.remove(app.earthPage);
+        }
+    }
+}
 window.addEventListener("keypress", (e)=>{
-    console.log(e);
+    console.log(e)
+    app.toggleInfo(e.key);
 })

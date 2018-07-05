@@ -1,3 +1,161 @@
+
+<script>
+requirejs.config({
+	paths	: {
+
+		"build"		: "vendor/tquery/build",
+		"plugins"	: "vendor/tquery/plugins",
+		'threex'	: 'vendor/tquery/vendor/threex',
+		'three.js'	: 'vendor/tquery/vendor/three.js',
+	},
+});
+</script><script>
+require([ 'tquery.controls'
+	, 'tquery.minecraft'
+	, 'tquery.skymap'
+	, 'tquery.grassground'
+	, 'tquery.keyboard'
+	, 'tquery.loaders'
+	, 'tquery.domevent'
+	, 'tquery.renderers'
+	, 'tquery.htmlmixer'
+], function(){
+	var world	= tQuery.createWorld().boilerplate().start();
+	
+	document.querySelector('#infoButton').addEventListener('click', function(event){
+		var element	= document.querySelector('#infoPopup');
+		console.log('display', element.style.display)
+		element.style.display	= element.style.display === 'none' ? 'block' : 'none';
+	});
+	
+	// enable domEvent on this world
+	world.enableDomEvent();	
+
+	// setup camera position
+	world.camera().positionY(1.5).positionZ(4).lookAt(0,1, 0)
+
+	// handle camera controls
+	var controls	= world.getCameraControls();
+	controls.rangeX	*= 1/8;
+	controls.rangeY	*= 1/8;
+	controls.target.set(0, 0.8, 0)
+	world.hook(function(){
+		if( world.camera().positionY() < 0.3 ){
+			world.camera().positionY(0.3)
+		}
+	})
+
+
+	var videoIdx	= 0;
+	var videos	= [];
+
+	var loader	= new THREE.ColladaLoader();
+	loader.options.convertUpAxis = true;
+	var modelUrl	= 'vendor/tquery/plugins/tvset/models/OldTelevisionSet01/models/Old Television Set 01.dae';
+	loader.load(modelUrl, function(collada){
+		var container	= tQuery.createObject3D().addTo(world)
+			.positionZ(-0.5)
+			.scaleBy(3)
+		
+		var tvSet	= tQuery(collada.scene).addTo(container)
+			.positionY(-0.4)
+
+		//var url		= 'http://www.youtube.com/embed/FY4UQpu1ijM';
+		var url		= 'http://example.org';
+		//var url	= 'http://pacmaze.com';
+		var plane	= tQuery.createHTMLMixerPlane(url).addTo(container)
+			.addClass('screen')
+			.positionY(0.31).positionZ(0.16)
+			.scaleX(1/2.2).scaleY(1/2.85)
+
+		initChannel();	
+	});
+
+	function initChannel(){
+		var request = new XMLHttpRequest()
+		var url = 'http://gdata.youtube.com/feeds/api/playlists/UUDyknKncQDzw7NdqYj2_94A?alt=json&start-index=1';
+		request.open("get", url, true);
+		request.onload  = function(){
+			// parse the feed
+			var response  = JSON.parse(this.responseText)
+			console.dir(response);
+			// extract from the title+embedUrl from the feed
+			response.feed.entry.forEach(function(entry){
+				var video	= {};
+				video.title	= entry.title['$t'];
+				entry['media$group']['media$content'].forEach(function(content){
+					if( content.type !== 'application/x-shockwave-flash') return;
+					video.embedUrl	= content.url;
+				})
+				videos.push(video);
+			})
+			console.log(videos)
+
+
+			// honor location.hash
+			if( location.hash ){
+				response.feed.entry.forEach(function(entry, idx){
+					var title	= decodeURIComponent(location.hash.substr(1));
+					if( entry.title['$t'] !== title )	return;
+					videoIdx	= idx;
+					setVideoUrl(videoIdx)
+				});
+			}
+
+
+			// BUTTON NEXT
+			var element		= document.createElement( 'div' );
+			element.style.width	= '256px';
+			element.style.height	= '256px';
+			element.title 		= 'Next Video';
+			element.classList.add("buttonPrevNext");
+			var tObject3D	= new THREE.CSS3DObject( element );
+			var htmlMixer	= world.htmlMixer();
+			var tSceneCSS	= htmlMixer.sceneCSS();
+			tQuery(tObject3D).addTo(tSceneCSS)
+				.positionX(0.45).positionY(0.17).positionZ(0.05)
+				.scaleX(0.5/256).scaleY(0.3/256)
+			element.addEventListener('click', function(event){
+				videoIdx	= (videoIdx+1 + videos.length) % videos.length;
+				setVideoUrl( videoIdx )
+			});
+
+	
+			// BUTTON PREV
+			var element		= document.createElement( 'div' );
+			element.style.width	= '256px';
+			element.style.height	= '256px';
+			element.title 		= 'Previous Video';
+			element.classList.add("buttonPrevNext");
+			var tObject3D	= new THREE.CSS3DObject( element );
+			var htmlMixer	= world.htmlMixer();
+			var tSceneCSS	= htmlMixer.sceneCSS();
+			tQuery(tObject3D).addTo(tSceneCSS)
+				.positionX(-0.45).positionY(0.17).positionZ(0.05)
+				.scaleX(0.5/256).scaleY(0.3/256)
+			element.addEventListener('click', function(event){
+				videoIdx	= (videoIdx-1 + videos.length) % videos.length;
+				setVideoUrl( videoIdx )
+			});
+			
+			videoIdx	= 0;
+			setVideoUrl( videoIdx )
+		}
+		request.send();
+	}
+
+	function setVideoUrl(videoIdx){
+		var video	= videos[videoIdx];
+		var plane	= tQuery('.screen')
+		var objectCSS	= plane.data('htmlMixerObjectCss')
+		var domElement	= objectCSS.element
+		domElement.src	= video.embedUrl;
+		location.hash	= encodeURIComponent(video.title);
+	}
+});
+</script>
+
+
 // main.js
 
 // // gui fields

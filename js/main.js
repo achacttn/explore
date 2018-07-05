@@ -13,7 +13,6 @@ app.init = (font) => {
     app.gui = new dat.GUI();
     app.gui.add(app.controls, 'sunRotationSpeed', 0, 0.1);
     app.gui.add(app.controls, 'humanRotate', 0, 10);
-    // app.gui.add(app.controls, 'galaxyRadius', 500, 2000);
 
     app.scene = new THREE.Scene();
     var TGALoader = new THREE.TGALoader();
@@ -23,6 +22,10 @@ app.init = (font) => {
     app.height = window.innerHeight;
 
     app.renderer = new THREE.WebGLRenderer({ antialias:true, logarithmicDepthBuffer:true });
+    app.renderer.setPixelRatio(window.devicePixelRatio);
+    app.renderer.domElement.style.position = 'absolute';
+    app.renderer.domElement.style.zIndex = 1;
+    app.renderer.domElement.style.top = 0;
     app.renderer.setSize(app.width, app.height);
     app.renderer.setClearColor(0x000000);
     app.renderer.shadowMap.enabled = true;
@@ -135,6 +138,46 @@ app.init = (font) => {
     }
     app.earthSpotlight = app.createSpotlight(app.earthSpotlightp);
     app.scene.add(app.earthSpotlight);
+    // earth page
+    var earthPageP = {
+        dim: { width: 2.5e5, height: 4e5 },
+        position: { x:0,y:0,z:0 },
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 0 },
+        shadow: { cast: false },
+    }
+    app.earthPage = app.createPlane(earthPageP);
+    app.earthPage.rotation.y = 0.74;
+    app.earthPage.position.set(-2e5, 0.5*1e5, 2e5);
+    
+    // // earth page rendering
+    
+
+    function createCssObject(w, h, position, rotation, url) {
+        var html = [
+            '<div style="width:' + w + 'px; height:' + h + 'px;">',
+            '<iframe src="' + url + '" width="' + w + '" height="' + h + '">',
+            '</iframe>',
+            '</div>'
+        ].join('\n');
+        var div = document.createElement('div');
+        $(div).html(html);
+        var cssObject = new THREE.CSS3DObject(div);
+        cssObject.position.x = position.x;
+        cssObject.position.y = position.y;
+        cssObject.position.z = position.z;
+        cssObject.rotation.x = rotation.x;
+        cssObject.rotation.y = rotation.y;
+        cssObject.rotation.z = rotation.z;
+        return cssObject;
+    }
+    // function createCssRenderer() {
+    //     var cssRenderer = new THREE.CSS3DRenderer();
+    //     cssRenderer.setSize(window.innerWidth, window.innerHeight);
+    //     cssRenderer.domElement.style.position = 'absolute';
+    //     glRenderer.domElement.style.zIndex = 0;
+    //     cssRenderer.domElement.style.top = 0;
+    //     return cssRenderer;
+    // }
 
 
     // jupiter
@@ -388,7 +431,7 @@ app.init = (font) => {
     }
     app.humanlabel = app.createText(humanlabelp);
     app.humanlabel.scale.set(2.5, 2.5, 2.5);
-    app.humanlabel.rotation.y = 0.74;
+    app.humanlabel.rotation.y = 0.85;
     app.humanlabel.receiveShadow = true;
     app.scene.add(app.humanlabel);
     // human lights
@@ -588,6 +631,11 @@ app.init = (font) => {
 
     // OTHER
     // add <canvas> element created by renderer to DOM
+    
+    // // main render dom element
+    // app.renderer.domElement.style.position = 'absolute';
+    // app.renderer.domElement.style.top = 0;
+    // app.renderer.domElement.style.zIndex = 1;
     document.getElementById('output').appendChild(app.renderer.domElement);
 
     app.stats = app.addStats();
