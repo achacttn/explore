@@ -141,13 +141,10 @@ app.animate = () => {
     // camera events
     app.camera1.distance = Math.sqrt(app.camera1.position.x**2+app.camera1.position.y**2+app.camera1.position.z**2)
     
-
-    1122021264.0023854
-    868198665.5546579
-    9512537.446475163
-    if( app.galaxyParticleSystem && app.sun ){
-        app.camera1.distance < 1e9 ? app.scene.remove(app.galaxyParticleSystem) && app.scene.remove(app.sun)
-        :app.scene.add(app.galaxyParticleSystem) && app.scene.add(app.sun);
+    // object rendering
+    if( app.galaxyParticleSystem && app.blackhole && app.sun ){
+        app.camera1.distance < 1e9 ? app.scene.remove(app.galaxyParticleSystem) && app.scene.remove(app.blackhole) && app.scene.remove(app.sun)
+        :app.scene.add(app.galaxyParticleSystem) && app.scene.add(app.blackhole) && app.scene.add(app.sun);
     }
     if( app.jupiter ){
         app.camera1.distance < 1e7 ? app.scene.remove(app.jupiter)
@@ -162,13 +159,39 @@ app.animate = () => {
         :app.scene.add(app.human);
     }
     if( app.cell ){
-        app.camera1.distance < 7.5 ? app.scene.remove(app.cell)
+        app.camera1.distance < 9.11 ? app.scene.remove(app.cell)
         :app.scene.add(app.cell);
     }
     if( app.DNA ){
-        app.camera1.distance < 0.0045 ? app.scene.remove(app.DNA)
+        app.camera1.distance < 0.0085 ? app.scene.remove(app.DNA)
         :app.scene.add(app.DNA);
     }
+
+
+
+    // skybox rendering
+    if( app.blackholeSkyBox ){
+        app.camera1.distance < 1.3e9 ? app.scene.remove(app.blackholeSkyBox)
+        :app.scene.add(app.blackholeSkyBox);
+    }
+    if( app.jupiterSkyBox ){
+        app.camera1.distance < 1.1e9 && app.camera1.distance > 1e5 ? app.scene.add(app.jupiterSkyBox)
+        :app.scene.remove(app.jupiterSkyBox)
+    }
+    if( app.humanSkyBox ){
+        app.camera1.distance < 133000 && app.camera1.distance > 1250 ? app.scene.add(app.humanSkyBox)
+        :app.scene.remove(app.humanSkyBox);
+    }
+    if( app.cellSkyBox ){
+        app.camera1.distance < 1249 && app.camera1.distance > 9.11 ? app.scene.add(app.cellSkyBox)
+        :app.scene.remove(app.cellSkyBox);
+    }
+    if( app.DNASkyBox ){
+        app.camera1.distance < 8.99 & app.camera1.distance > 0.0085 ? app.scene.add(app.DNASkyBox)
+        :app.scene.remove(app.DNASkyBox);
+    }
+
+
     // // if( app.DNA ){
     // //     app.camera1.distance < 0.0175 ? app.scene.add(app.DNA) : app.scene.remove(app.DNA);
     // // }

@@ -17,6 +17,7 @@ app.init = (font) => {
 
     app.scene = new THREE.Scene();
     var TGALoader = new THREE.TGALoader();
+    var TextureLoader = new THREE.TextureLoader();
 
     app.width = window.innerWidth;
     app.height = window.innerHeight;
@@ -83,7 +84,7 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(1e12,1e12,1e12)
+    app.camera1.position.set(5,5,5)
     app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
     // app.camera1_pivot.rotateOnAxis(app.Y_AXIS, 0.01);
@@ -105,7 +106,7 @@ app.init = (font) => {
     var earthP = {
         dim: { radius: 1e5, triangles: 40, other: 40 },
         position: { x:0, y:0, z:0 },
-        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/earth.jpg') },
+        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: TextureLoader.load('img/earth.jpg') },
         shadow: { cast: false },
     }
     app.earth = app.createSphere(earthP);
@@ -158,26 +159,26 @@ app.init = (font) => {
     app.jupiterlabel.rotation.y = 0.85;
     app.jupiterlabel.receiveShadow = true;
     app.scene.add(app.jupiterlabel);
-    // // jupiter skybox
-    // app.jupiterImagePrefix = "img/solar_system/solar_system_";
-    // app.jupiterDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
-    // app.jupiterImageSuffix = ".tga";
-    // app.jupiterSkyGeometry = new THREE.CubeGeometry(0.9*1e9, 0.9*1e9, 0.9*1e9);
-    // app.jupiterMaterialArray = [];
-    // for (var i = 0; i < 6; i++)
-    //     app.jupiterMaterialArray.push(new THREE.MeshBasicMaterial({
-    //         map: TGALoader.load(app.jupiterImagePrefix + app.jupiterDirections[i] + app.jupiterImageSuffix),
-    //         side: THREE.BackSide
-    //     }));
-    // app.jupiterSkyMaterial = new THREE.MeshFaceMaterial(app.jupiterMaterialArray);
-    // app.jupiterSkyBox = new THREE.Mesh(app.jupiterSkyGeometry, app.jupiterSkyMaterial);
-    // app.scene.add(app.jupiterSkyBox);
+    // jupiter skybox
+    app.jupiterImagePrefix = "img/solar_system/solar_system_";
+    app.jupiterDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
+    app.jupiterImageSuffix = ".tga";
+    app.jupiterSkyGeometry = new THREE.CubeGeometry(1.5*1e9, 1.5*1e9, 1.5*1e9);
+    app.jupiterMaterialArray = [];
+    for (var i = 0; i < 6; i++)
+        app.jupiterMaterialArray.push(new THREE.MeshBasicMaterial({
+            map: TGALoader.load(app.jupiterImagePrefix + app.jupiterDirections[i] + app.jupiterImageSuffix),
+            side: THREE.BackSide
+        }));
+    app.jupiterSkyMaterial = new THREE.MeshFaceMaterial(app.jupiterMaterialArray);
+    app.jupiterSkyBox = new THREE.Mesh(app.jupiterSkyGeometry, app.jupiterSkyMaterial);
+    app.scene.add(app.jupiterSkyBox);
 
     // sun (need to do something with shaders)
     var sunP = {
         dim: { radius: 1e9, triangles: 40, other: 40 },
         position: { x:0, y:0, z:0 },
-        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: THREE.ImageUtils.loadTexture('img/suntexture01.jpg')},
+        mesh: { material:"lambert", color: 0xFFFFFF, side: undefined, wireframe: false, map: TextureLoader.load('img/suntexture01.jpg')},
         shadow: { cast: false },
     }
     app.sun = app.createSphere(sunP);
@@ -208,14 +209,14 @@ app.init = (font) => {
     app.scene.add(app.blackhole);
 
     // blackhole+galaxy skybox
-    app.blackholeImagePrefix = "img/nebula/nebula_";
-    app.blackholeDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
-    app.blackholeImageSuffix = ".tga";
+    app.blackholeImagePrefix = "img/deepspace/deepspace_";
+    app.blackholeDirections = ["front", "back", "up", "down", "right", "left"];
+    app.blackholeImageSuffix = ".png";
     app.blackholeSkyGeometry = new THREE.CubeGeometry(1e15, 1e15, 1e15);
     app.blackholeMaterialArray = [];
     for (var i = 0; i < 6; i++)
         app.blackholeMaterialArray.push(new THREE.MeshBasicMaterial({
-            map: TGALoader.load(app.blackholeImagePrefix + app.blackholeDirections[i] + app.blackholeImageSuffix),
+            map: TextureLoader.load(app.blackholeImagePrefix + app.blackholeDirections[i] + app.blackholeImageSuffix),
             side: THREE.BackSide
         }));
     app.blackholeSkyMaterial = new THREE.MeshFaceMaterial(app.blackholeMaterialArray);
@@ -398,8 +399,8 @@ app.init = (font) => {
     app.humanSpotlight = app.createSpotlight(app.humanSpotlightp);
     app.scene.add(app.humanSpotlight);
     // human skybox
-    app.humanImagePrefix = "img/mp_midnight/midnight-silence_";
-    app.humanDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
+    app.humanImagePrefix = "img/earth/earth_";
+    app.humanDirections = ["front", "back", "up", "down", "right", "left"];
     app.humanImageSuffix = ".tga";
     app.humanSkyGeometry = new THREE.CubeGeometry(230000, 230000, 230000);
     app.humanMaterialArray = [];
@@ -439,14 +440,14 @@ app.init = (font) => {
     app.DNAlabel.position = { x:-0.186, y:0.182, z:-0.365 };
     app.scene.add(app.DNAlabel);
     // DNA skybox
-    app.DNAImagePrefix = "img/DNA/dna";
-    app.DNADirections = ["1", "1", "1", "1", "1", "1"];
+    app.DNAImagePrefix = "img/DNAcubemap/DNA";
+    app.DNADirections = ["ft", "ft", "lf", "ft", "lf", "lf"];
     app.DNAImageSuffix = ".jpg";
-    app.DNASkyGeometry = new THREE.CubeGeometry(7, 7, 7);
+    app.DNASkyGeometry = new THREE.CubeGeometry(15, 15, 15);
     app.DNAMaterialArray = [];
     for (var i = 0; i < 6; i++)
         app.DNAMaterialArray.push(new THREE.MeshBasicMaterial({
-            map: THREE.ImageUtils.loadTexture(app.DNAImagePrefix + app.DNADirections[i] + app.DNAImageSuffix),
+            map: TextureLoader.load(app.DNAImagePrefix + app.DNADirections[i] + app.DNAImageSuffix),
             side: THREE.BackSide
         }));
     app.DNASkyMaterial = new THREE.MeshFaceMaterial(app.DNAMaterialArray);
@@ -490,11 +491,11 @@ app.init = (font) => {
     app.cellImagePrefix = "img/bloodv/bloodv";
     app.cellDirections = ["1", "1", "1", "0", "0", "0"];
     app.cellImageSuffix = ".jpg";
-    app.cellSkyGeometry = new THREE.CubeGeometry(1500, 1500, 1500);
+    app.cellSkyGeometry = new THREE.CubeGeometry(2500, 2500, 2500);
     app.cellMaterialArray = [];
     for (var i = 0; i < 6; i++)
         app.cellMaterialArray.push(new THREE.MeshBasicMaterial({
-            map: THREE.ImageUtils.loadTexture(app.cellImagePrefix + app.cellDirections[i] + app.cellImageSuffix),
+            map: TextureLoader.load(app.cellImagePrefix + app.cellDirections[i] + app.cellImageSuffix),
             side: THREE.BackSide
         }));
     app.cellSkyMaterial = new THREE.MeshFaceMaterial(app.cellMaterialArray);
