@@ -139,41 +139,69 @@ app.animate = () => {
     // app.example.geometry.attributes.vertexDisplacement.needsUpdate = true;
 
     // camera events
-    app.camera1.distance = Math.sqrt(app.camera1.position.x ** 2
-        + app.camera1.position.y ** 2 + app.camera1.position.z ** 2)
-    if( app.DNA ){
-        app.camera1.distance < 0.0175 ? app.DNA.visible = false : app.DNA.visible = true;
+    app.camera1.distance = Math.sqrt(app.camera1.position.x**2+app.camera1.position.y**2+app.camera1.position.z**2)
+    
+
+    1122021264.0023854
+    868198665.5546579
+    9512537.446475163
+    if( app.galaxyParticleSystem && app.sun ){
+        app.camera1.distance < 1e9 ? app.scene.remove(app.galaxyParticleSystem) && app.scene.remove(app.sun)
+        :app.scene.add(app.galaxyParticleSystem) && app.scene.add(app.sun);
     }
-    if( app.cell ){
-        app.camera1.distance < 8.6 ? app.cell.visible = false : app.cell.visible = true;
+    if( app.jupiter ){
+        app.camera1.distance < 1e7 ? app.scene.remove(app.jupiter)
+        :app.scene.add(app.jupiter);
+    }
+    if( app.earth ){
+        app.camera1.distance < 90000 ? app.scene.remove(app.earth)
+        :app.scene.add(app.earth);
     }
     if( app.human ){
-        app.camera1.distance < 1127 ? app.human.visible = false : app.human.visible = true;
+        app.camera1.distance < 1200 ? app.scene.remove(app.human)
+        :app.scene.add(app.human);
     }
-    // if( app.galaxyParticleSystem ){
-    //     app.camera1.distance < 500 ? app.galaxyParticleSystem.visible = true : app.galaxyParticleSystem.
-    // }
+    if( app.cell ){
+        app.camera1.distance < 7.5 ? app.scene.remove(app.cell)
+        :app.scene.add(app.cell);
+    }
+    if( app.DNA ){
+        app.camera1.distance < 0.0045 ? app.scene.remove(app.DNA)
+        :app.scene.add(app.DNA);
+    }
+    // // if( app.DNA ){
+    // //     app.camera1.distance < 0.0175 ? app.scene.add(app.DNA) : app.scene.remove(app.DNA);
+    // // }
+    // // if( app.cell ){
+    // //     app.camera1.distance < 8.6 ? app.scene.add(app.cell) : app.scene.remove(app.cell);
+    // // }
+    // // if( app.human ){
+    // //     app.camera1.distance < 1127 ? app.scene.add(app.human) : app.scene.remove(app.human);
+    // // }
+    // // if( app.galaxyParticleSystem ){
+    // //     app.camera1.distance < 500 ? app.galaxyParticleSystem.visible = true : app.galaxyParticleSystem.
+    // // }
 
-    // camera vs skybox
-    if( app.DNASkyBox ){
-        app.DNASkyBox.visible = app.camera1.distance < 10.5 ? true : false;
-    }
-    if (app.cellSkyBox) {
-        app.cellSkyBox.visible = app.camera1.distance < 1200 ? true : false;
-    }
-    if( app.humanSkyBox ){
-        app.humanSkyBox.visible = app.camera1.distance < 100000 ? true : false;
-    }
-    if( app.jupiterSkyBox ){
-        app.jupiterSkyBox.visible = app.camera1.distance < 3e9 ? true : false;
-    }
+    // // camera vs skybox
+    // if( app.DNASkyBox ){
+    //     app.camera1.distance < 10.5 ? app.scene.add(app.DNASkyBox) : app.scene.remove(app.DNASkyBox);
+    // }
+    // if (app.cellSkyBox) {
+    //     app.camera1.distance < 1200 ? app.scene.add(app.cellSkyBox) : app.scene.remove(app.cellSkyBox);
+    // }
+    // if( app.human && app.humanSkyBox ){
+    //     app.camera1.distance < 100000 ? app.scene.add(app.humanSkyBox) && app.scene.add(app.human) : app.scene.remove(app.humanSkyBox) && app.scene.remove(app.human);
+    // }
+    // // if( app.jupiterSkyBox ){
+    // //     app.jupiterSkyBox.visible = app.camera1.distance < 2e10 ? true : false;
+    // // }
     
     // galaxy dynamic particles
     app.time = Date.now() * 0.005;
     app.galaxyParticleSystem.rotation.y += 0.01;
     app.sizes = app.galaxyGeometry.attributes.size.array;
     for (var i = 0; i < app.galaxyParticles; i++) {
-        app.sizes[i] = 1000000 * (1 + Math.sin(0.1 * i + app.time));
+        app.sizes[i] = 1e10 * (1 + Math.sin(0.1 * i + app.time));
     }
     app.galaxyGeometry.attributes.size.needsUpdate = true;
 

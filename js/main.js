@@ -54,11 +54,12 @@ app.init = (font) => {
         font: font,
         size: 800,
         height: 500,
-        mesh: {material:"lambert", color:0x00FF00},
+        mesh: {material:"normal", color:0x00FF00},
         translationFactor:{tx:-1,ty:0,tz:0}
     }
     app.text1 = app.createText(text1p);
     app.text1.scale.set(0.000001,0.000001,0.000001);
+    app.text1.rotation.y = 0.85;
     app.text1.receiveShadow = true;
     app.scene.add( app.text1 );
 
@@ -82,12 +83,10 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(60000000,60000000,60000000) // cell
-    // app.camera1.position.set(5*1e9, 5*1e9, 5*1e9); // sun
+    app.camera1.position.set(1e12,1e12,1e12)
     app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
     // app.camera1_pivot.rotateOnAxis(app.Y_AXIS, 0.01);
-
 
     // var camera1Helper = new THREE.CameraHelper(app.camera1);
     // app.scene.add(camera1Helper);
@@ -159,20 +158,20 @@ app.init = (font) => {
     app.jupiterlabel.rotation.y = 0.85;
     app.jupiterlabel.receiveShadow = true;
     app.scene.add(app.jupiterlabel);
-    // jupiter skybox
-    app.jupiterImagePrefix = "img/solar_system/solar_system_";
-    app.jupiterDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
-    app.jupiterImageSuffix = ".tga";
-    app.jupiterSkyGeometry = new THREE.CubeGeometry(0.9*1e9, 0.9*1e9, 0.9*1e9);
-    app.jupiterMaterialArray = [];
-    for (var i = 0; i < 6; i++)
-        app.jupiterMaterialArray.push(new THREE.MeshBasicMaterial({
-            map: TGALoader.load(app.jupiterImagePrefix + app.jupiterDirections[i] + app.jupiterImageSuffix),
-            side: THREE.BackSide
-        }));
-    app.jupiterSkyMaterial = new THREE.MeshFaceMaterial(app.jupiterMaterialArray);
-    app.jupiterSkyBox = new THREE.Mesh(app.jupiterSkyGeometry, app.jupiterSkyMaterial);
-    app.scene.add(app.jupiterSkyBox);
+    // // jupiter skybox
+    // app.jupiterImagePrefix = "img/solar_system/solar_system_";
+    // app.jupiterDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
+    // app.jupiterImageSuffix = ".tga";
+    // app.jupiterSkyGeometry = new THREE.CubeGeometry(0.9*1e9, 0.9*1e9, 0.9*1e9);
+    // app.jupiterMaterialArray = [];
+    // for (var i = 0; i < 6; i++)
+    //     app.jupiterMaterialArray.push(new THREE.MeshBasicMaterial({
+    //         map: TGALoader.load(app.jupiterImagePrefix + app.jupiterDirections[i] + app.jupiterImageSuffix),
+    //         side: THREE.BackSide
+    //     }));
+    // app.jupiterSkyMaterial = new THREE.MeshFaceMaterial(app.jupiterMaterialArray);
+    // app.jupiterSkyBox = new THREE.Mesh(app.jupiterSkyGeometry, app.jupiterSkyMaterial);
+    // app.scene.add(app.jupiterSkyBox);
 
     // sun (need to do something with shaders)
     var sunP = {
@@ -207,6 +206,7 @@ app.init = (font) => {
     }
     app.blackhole = app.createSphere(blackholeP);
     app.scene.add(app.blackhole);
+
     // blackhole+galaxy skybox
     app.blackholeImagePrefix = "img/nebula/nebula_";
     app.blackholeDirections = ["ft", "bk", "up", "dn", "rt", "lf"];
@@ -222,15 +222,15 @@ app.init = (font) => {
     app.blackholeSkyBox = new THREE.Mesh(app.blackholeSkyGeometry, app.blackholeSkyMaterial);
     app.scene.add(app.blackholeSkyBox);
 
-    // galactic centre
-    var galaxyP = {
-        dim: { radius: 0.5*1e13, triangles: 40, other: 40 },
-        position: { x: 0, y: 0, z: 0 },
-        mesh: { material: "normal", color: 0xFFFFFF, side: THREE.FrontSide, wireframe: true, map: undefined },
-        shadow: { cast: false },
-    }
-    app.galaxy = app.createSphere(galaxyP);
-    app.scene.add(app.galaxy);
+    // // galactic centre
+    // var galaxyP = {
+    //     dim: { radius: 0.5*1e13, triangles: 40, other: 40 },
+    //     position: { x: 0, y: 0, z: 0 },
+    //     mesh: { material: "normal", color: 0xFFFFFF, side: THREE.FrontSide, wireframe: true, map: undefined },
+    //     shadow: { cast: false },
+    // }
+    // app.galaxy = app.createSphere(galaxyP);
+    // app.scene.add(app.galaxy);
     // galaxy shaders
     app.galaxyUniforms = {
         texture: { value: new THREE.TextureLoader().load('img/spark.png') }
@@ -244,7 +244,7 @@ app.init = (font) => {
         transparent: true,
         vertexColors: true
     });
-    app.galaxyRadius = 15000000;
+    app.galaxyRadius = 1.5e11;
     app.galaxyGeometry = new THREE.BufferGeometry();
     app.galaxyParticles = 200000;
     app.galaxyPositions = [];
@@ -541,24 +541,24 @@ app.init = (font) => {
     // exampleSphere.addAttribute('vertexDisplacement', new THREE.BufferAttribute(vertexDisplacement, 1));
 
 
-    // wireframe spheres
-    const sceneSpheres = [];
-    const spheresArr = [(10 ** 13)];
-    const sceneSphereMesh = {
-        material: "lambert",
-        color: 0xFF0000,
-        wireframe: true,
-    };
-    for (var i = 0; i < spheresArr.length; i++) {
-        var sphereParamaters = {
-            dim: { radius: spheresArr[i], triangles: 40, other: 40 },
-            position: { x: 0, y: 0, z: 0 },
-            mesh: sceneSphereMesh,
-            shadow: { cast: false },
-        }
-        sceneSpheres[i] = app.createSphere(sphereParamaters);
-        app.scene.add(sceneSpheres[i]);
-    };
+    // // wireframe spheres
+    // const sceneSpheres = [];
+    // const spheresArr = [(10 ** 13)];
+    // const sceneSphereMesh = {
+    //     material: "lambert",
+    //     color: 0xFF0000,
+    //     wireframe: true,
+    // };
+    // for (var i = 0; i < spheresArr.length; i++) {
+    //     var sphereParamaters = {
+    //         dim: { radius: spheresArr[i], triangles: 40, other: 40 },
+    //         position: { x: 0, y: 0, z: 0 },
+    //         mesh: sceneSphereMesh,
+    //         shadow: { cast: false },
+    //     }
+    //     sceneSpheres[i] = app.createSphere(sphereParamaters);
+    //     app.scene.add(sceneSpheres[i]);
+    // };
 
     // // lod test
     //     var lod = new THREE.LOD();
