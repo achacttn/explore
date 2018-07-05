@@ -84,8 +84,9 @@ app.init = (font) => {
     app.mouseControls = new THREE.OrbitControls(
         app.camera1, app.renderer.domElement
     );
-    app.camera1.position.set(5,5,5)
-    app.camera1.distance = 0;
+    app.camera1.position.set(4e5,4e5,4e5);
+    // 108446902065.69307
+    // app.camera1.distance = 0;
     // app.camera1.lookAt(app.camera1_pivot.position);
     // app.camera1_pivot.rotateOnAxis(app.Y_AXIS, 0.01);
 
@@ -294,14 +295,14 @@ app.init = (font) => {
         // x position
         app.galaxyPositions.push( currentX );
         // y position attempt
-        app.galaxyPositions.push( yAxisDistributor*Math.random()*((app.galaxyRadius-randRad)/4) );
+        app.galaxyPositions.push( yAxisDistributor*Math.random()*((app.galaxyRadius-randRad)/8) );
         // app.galaxyPositions.push( currentY( randRad ) )
         // app.galaxyPositions.push( (((app.galaxyRadius**2)-((500-randRad)**2)) /app.galaxyRadius)*( Math.random() > 0.5 ? 1 : -1 ) );
         // z position
         app.galaxyPositions.push( currentZ );
 
         // // // galaxy particle colors
-        app.galaxyColor.setHSL( i/app.galaxyParticles, 1.0, 0.5 );
+        app.galaxyColor.setHSL( 280+20+Math.random(), 1.0, 0.5 );
         app.galaxyColors.push(app.galaxyColor.r, app.galaxyColor.g, app.galaxyColor.b);
         // app.galaxyColors.push( 1,1,1 );
         app.galaxySizes.push(20);
@@ -426,7 +427,7 @@ app.init = (font) => {
     });
     // DNA label
     var DNAlabelp = {
-        textString: "DNA STRAND",
+        textString: "DNA",
         font: font,
         size: 50,
         height:50,

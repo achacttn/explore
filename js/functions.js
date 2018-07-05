@@ -235,3 +235,6 @@ app.animate = () => {
 
 // for human body 1302
 
+window.addEventListener("keypress", (e)=>{
+    console.log(e);
+})
