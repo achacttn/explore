@@ -10,6 +10,7 @@ More specifically, attributes of three-dimensional objects (shape, mesh, etc) ar
 The results of these interactions between the objects, lighting, and the environment, are projected onto a canvas element.
 
 ![First test of a JSON model](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/json01.png)
+First test of a JSON model
 
 The orders of magnitude vary from 1e-6 to 1e18. Logarithmic depth buffering allows for the scaling of camera movement speed proportional to the log of its displacement from the origin.
 
@@ -18,29 +19,37 @@ THREE.js supports several image and 3d object formats.
 Most simple geometries were created by specifying a geometry and a mesh.
 
 ![Earth](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/mesh01.png)
+Earth
 
 Complicated objects with many vertices and faces (such as a human) were imported with its respective loader.
 
 ![Typical result when googling "human model"](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/humanmodel01.png)
+Typical result when googling "human model"
 
 ![Human](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/humanmodel02.png)
+Human
 
 Galaxy was created by defining a vertex shader to describe particle dimensions, as well as afragment shader for texture and color.
 
 ![Inside galaxy](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/galaxy01.png)
+Inside galaxy
 
 Shader code was specified to be as the mesh of a single particle, and these particles were added to a more general Buffer Geometry.
 
 ![Side view](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/galaxy02.png)
+Side view
 
 The particles were uniformly distributed to produce a circular-shape in the x-z plane and a mirrored slope in the y-plane.
 The particles by themselves have potential to be used in visualizing probability density functions.
 
 ![Example #1](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/particles01.png)
+Example #1
 
 ![Example #2](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/particles02.png)
+Example #2
 
 ![Example #3](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/particles03.png)
+Example #3
 
 ### Bugs
 
