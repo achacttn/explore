@@ -11,6 +11,8 @@ The results of these interactions between the objects, lighting, and the environ
 
 ![First test of a JSON model](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/json01.png)
 
+The orders of magnitude vary from 1e-6 to 1e18. Logarithmic depth buffering allows for the scaling of camera movement speed proportional to the log of its displacement from the origin.
+
 Through WebGL (JavaScript API used by a browser to directly access the GPU), shader code written in GLSL can be combined with JavaScript control code to produce complex image-processing or physics.
 THREE.js supports several image and 3d object formats.
 Most simple geometries were created by specifying a geometry and a mesh.
