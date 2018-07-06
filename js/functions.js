@@ -142,15 +142,21 @@ app.createCSSObject = ( width, height, position, rotation, url )=>{
 //     return particleSystem;
 // };
 
+
+
 // render loop
 var delta = 0;
 app.animate = () => {
 
     app.stats.update();
-    app.earth.rotation.y += 0.01;
-    app.jupiter.rotation.y += 0.01;
+    app.earth.rotation.y += app.controls.earthRotationSpeed;
+    app.jupiter.rotation.y += app.controls.jupiterRotationSpeed;
     app.sun.rotation.y += app.controls.sunRotationSpeed;
-    // app.humanlabel.rotation.y = app.controls.humanRotate;
+    app.galaxyParticleSystem.rotation.y += app.controls.galaxyRotationSpeed;
+    // app.galaxy
+
+
+
 
     // // vertex fragments & vertex
     // delta +=0.1;

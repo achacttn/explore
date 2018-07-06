@@ -3,16 +3,24 @@ app.step = 0;
 
 // gui fields
 app.controls = {
+    earthRotationSpeed: 0.01,
+    jupiterRotationSpeed: 0.01,
     sunRotationSpeed: 0.01,
-    humanRotate: 0.5,
+    galaxyRotationSpeed: 0,
+    // galaxyColor: 0,
+    // humanRotate: 0.5,
     // galaxyRadius: 500,
 };
 
 app.init = (font) => {
     // gui controls
     app.gui = new dat.GUI();
-    app.gui.add(app.controls, 'sunRotationSpeed', 0, 0.1);
-    app.gui.add(app.controls, 'humanRotate', 0, 10);
+    app.gui.add(app.controls, 'earthRotationSpeed', 0, 1);
+    app.gui.add(app.controls, 'jupiterRotationSpeed', 0, 1);
+    app.gui.add(app.controls, 'sunRotationSpeed', 0, 1);
+    app.gui.add(app.controls, 'galaxyRotationSpeed', 0, 0.1);
+
+    // app.gui.add(app.controls, 'humanRotate', 0, 10);
 
     app.scene = new THREE.Scene();
     app.CSS3Dscene = new THREE.Scene();
