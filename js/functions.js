@@ -214,32 +214,20 @@ app.animate = () => {
     }
 
 
-    // // if( app.DNA ){
-    // //     app.camera1.distance < 0.0175 ? app.scene.add(app.DNA) : app.scene.remove(app.DNA);
-    // // }
-    // // if( app.cell ){
-    // //     app.camera1.distance < 8.6 ? app.scene.add(app.cell) : app.scene.remove(app.cell);
-    // // }
-    // // if( app.human ){
-    // //     app.camera1.distance < 1127 ? app.scene.add(app.human) : app.scene.remove(app.human);
-    // // }
-    // // if( app.galaxyParticleSystem ){
-    // //     app.camera1.distance < 500 ? app.galaxyParticleSystem.visible = true : app.galaxyParticleSystem.
-    // // }
 
-    // // camera vs skybox
-    // if( app.DNASkyBox ){
-    //     app.camera1.distance < 10.5 ? app.scene.add(app.DNASkyBox) : app.scene.remove(app.DNASkyBox);
+    // camera vs skybox
+    if( app.DNASkyBox ){
+        app.camera1.distance < 10.5 ? app.scene.add(app.DNASkyBox) : app.scene.remove(app.DNASkyBox);
+    }
+    if (app.cellSkyBox) {
+        app.camera1.distance < 1200 ? app.scene.add(app.cellSkyBox) : app.scene.remove(app.cellSkyBox);
+    }
+    if( app.human && app.humanSkyBox ){
+        app.camera1.distance < 100000 ? app.scene.add(app.humanSkyBox) && app.scene.add(app.human) : app.scene.remove(app.humanSkyBox) && app.scene.remove(app.human);
+    }
+    // if( app.jupiterSkyBox ){
+    //     app.jupiterSkyBox.visible = app.camera1.distance < 2e10 ? true : false;
     // }
-    // if (app.cellSkyBox) {
-    //     app.camera1.distance < 1200 ? app.scene.add(app.cellSkyBox) : app.scene.remove(app.cellSkyBox);
-    // }
-    // if( app.human && app.humanSkyBox ){
-    //     app.camera1.distance < 100000 ? app.scene.add(app.humanSkyBox) && app.scene.add(app.human) : app.scene.remove(app.humanSkyBox) && app.scene.remove(app.human);
-    // }
-    // // if( app.jupiterSkyBox ){
-    // //     app.jupiterSkyBox.visible = app.camera1.distance < 2e10 ? true : false;
-    // // }
     
     // galaxy dynamic particles
     app.time = Date.now() * 0.005;
@@ -256,86 +244,86 @@ app.animate = () => {
     requestAnimationFrame(app.animate);
 }
 
-// // page toggle
-// var earthInfo = -1;
-// app.toggleEarth = () => {
-//     earthInfo *= -1;
-//     if (earthInfo > 0) {
-//         app.scene.add(app.earthPage);
-//     } else {
-//         app.scene.remove(app.earthPage);
-//     }
-// }
-// var jupiterInfo = -1;
-// app.toggleJupiter = () => {
-//     jupiterInfo *= -1;
-//     if (jupiterInfo > 0) {
-//         app.scene.add(app.jupiterPage);
-//     } else {
-//         app.scene.remove(app.jupiterPage);
-//     }
-// }
-// var sunInfo = -1;
-// app.toggleSun = ()=>{
-//     sunInfo*= -1;
-//     if(sunInfo > 0){
-//         app.scene.add(app.sunPage);
-//     } else {
-//         app.scene.remove(app.sunPage);
-//     }
-// }
-// var galaxyInfo = -1;
-// app.toggleGalaxy = ()=>{
-//     galaxyInfo*= -1;
-//     if(galaxyInfo > 0){
-//         app.scene.add(app.galaxyPage);
-//     } else {
-//         app.scene.remove(app.galaxyPage);
-//     }
-// }
-// var humanInfo = -1;
-// app.toggleHuman = ()=>{
-//     humanInfo*= -1;
-//     if(humanInfo > 0){
-//         app.scene.add(app.humanPage);
-//     } else {
-//         app.scene.remove(app.humanPage);
-//     }
-// }
-// var cellInfo = -1;
-// app.toggleCell = ()=>{
-//     cellInfo*= -1;
-//     if(cellInfo > 0){
-//         app.scene.add(app.cellPage);
-//     } else {
-//         app.scene.remove(app.cellPage);
-//     }
-// }
-// var DNAInfo = -1;
-// app.toggleDNA = ()=>{
-//     DNAInfo*= -1;
-//     if(DNAInfo > 0){
-//         app.scene.add(app.DNAPage);
-//     } else {
-//         app.scene.remove(app.DNAPage);
-//     }
-// }
+// page toggle
+var earthInfo = -1;
+app.toggleEarth = () => {
+    earthInfo *= -1;
+    if (earthInfo > 0) {
+        app.scene.add(app.earthPage);
+    } else {
+        app.scene.remove(app.earthPage);
+    }
+}
+var jupiterInfo = -1;
+app.toggleJupiter = () => {
+    jupiterInfo *= -1;
+    if (jupiterInfo > 0) {
+        app.scene.add(app.jupiterPage);
+    } else {
+        app.scene.remove(app.jupiterPage);
+    }
+}
+var sunInfo = -1;
+app.toggleSun = ()=>{
+    sunInfo*= -1;
+    if(sunInfo > 0){
+        app.scene.add(app.sunPage);
+    } else {
+        app.scene.remove(app.sunPage);
+    }
+}
+var galaxyInfo = -1;
+app.toggleGalaxy = ()=>{
+    galaxyInfo*= -1;
+    if(galaxyInfo > 0){
+        app.scene.add(app.galaxyPage);
+    } else {
+        app.scene.remove(app.galaxyPage);
+    }
+}
+var humanInfo = -1;
+app.toggleHuman = ()=>{
+    humanInfo*= -1;
+    if(humanInfo > 0){
+        app.scene.add(app.humanPage);
+    } else {
+        app.scene.remove(app.humanPage);
+    }
+}
+var cellInfo = -1;
+app.toggleCell = ()=>{
+    cellInfo*= -1;
+    if(cellInfo > 0){
+        app.scene.add(app.cellPage);
+    } else {
+        app.scene.remove(app.cellPage);
+    }
+}
+var DNAInfo = -1;
+app.toggleDNA = ()=>{
+    DNAInfo*= -1;
+    if(DNAInfo > 0){
+        app.scene.add(app.DNAPage);
+    } else {
+        app.scene.remove(app.DNAPage);
+    }
+}
 
 
-// window.addEventListener("keypress", (e)=>{
-//     if(e.key==="e"){
-//         app.toggleEarth();
-//     } else if(e.key==="j"){
-//         app.toggleJupiter();
-//     } else if(e.key==="s"){
-//         app.toggleSun();
-//     } else if(e.key==="g"){
-//         app.toggleGalaxy();
-//     } else if(e.key==="h"){
-//         app.toggleHuman();
-//     } else if(e.key==="c"){
-//         app.toggleCell();
-//     } else if(e.key==="d"){
-//         app.toggleDNA();
-//     }
-// })
+window.addEventListener("keypress", (e)=>{
+    if(e.key==="e"){
+        app.toggleEarth();
+    } else if(e.key==="j"){
+        app.toggleJupiter();
+    } else if(e.key==="s"){
+        app.toggleSun();
+    } else if(e.key==="g"){
+        app.toggleGalaxy();
+    } else if(e.key==="h"){
+        app.toggleHuman();
+    } else if(e.key==="c"){
+        app.toggleCell();
+    } else if(e.key==="d"){
+        app.toggleDNA();
+    }
+})

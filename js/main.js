@@ -29,7 +29,7 @@ app.init = (font) => {
     
     app.renderer.domElement.style.top = 0;
     app.renderer.setSize(app.width, app.height);
-    app.renderer.setClearColor(0x000000);
+    app.renderer.setClearColor(0xFFFFFF, 0.5);
     app.renderer.shadowMap.enabled = true;
     app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     // css3d renderer
@@ -39,8 +39,8 @@ app.init = (font) => {
     app.CSS3DRenderer.domElement.style.top = 0;
 
 
-    app.axes = new THREE.AxesHelper(1e18);
-    app.scene.add(app.axes);
+    // app.axes = new THREE.AxesHelper(1e18);
+    // app.scene.add(app.axes);
 
     // lighting
     // ambient
@@ -153,7 +153,7 @@ app.init = (font) => {
         position: { x:-3e5,y:0.5*1e5,z:0 },
         // opacity must be set to 0 for page to be transparent.
         // color of mesh should also be set to black
-        mesh: { material: "basic", color: 0xFF0000, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
+        mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
         
         shadow: { cast: false },
     }
@@ -161,7 +161,7 @@ app.init = (font) => {
     app.earthPage.rotation.set(0,0.54,0);
     // create css3d object for earthPage
     app.earthPageCSSObject = app.createCSSObject(earthPageP.dim.width, earthPageP.dim.height, earthPageP.position, app.earthPage.rotation, 'https://en.wikipedia.org/wiki/Earth' );
-    app.scene.add(app.earthPage);
+    // app.scene.add(app.earthPage);
     app.CSS3Dscene.add(app.earthPageCSSObject);
 
 
@@ -259,7 +259,7 @@ app.init = (font) => {
 
     // blackhole shell
     var blackholeP = {
-        dim: { radius: 1e11, triangles: 40, other: 40 },
+        dim: { radius: 0.5*1e11, triangles: 40, other: 40 },
         position: { x: 0, y: 0, z: 0 },
         mesh: { material: "normal", color: 0xFFFFFF, side: undefined, wireframe: true, map: undefined },
         shadow: { cast: false },
@@ -473,8 +473,8 @@ app.init = (font) => {
     app.scene.add(app.humanSkyBox);
     // human page
     var humanPageP = {
-        dim: { width: 5000, height: 8000 },
-        position: { x: -6000, y: 1000, z: 0 },
+        dim: { width: 7500, height: 12000 },
+        position: { x: -10000, y: 1000, z: 0 },
         // opacity must be set to 0 for page to be transparent.
         // color of mesh should also be set to black
         mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
@@ -532,8 +532,8 @@ app.init = (font) => {
     app.scene.add(app.DNASkyBox);
     // DNA page
     var DNAPageP = {
-        dim: { width: 0.1, height: 0.16 },
-        position: { x: -0.1, y: 0.1, z: 0 },
+        dim: { width: 0.25, height: 0.4 },
+        position: { x: -0.3, y: 0.1, z: 0 },
         // opacity must be set to 0 for page to be transparent.
         // color of mesh should also be set to black
         mesh: { material: "basic", color: 0xFFFFFF, side: THREE.DoubleSide, wireframe: false, opacity: 1 },
@@ -595,7 +595,7 @@ app.init = (font) => {
     app.scene.add(app.cellSkyBox);
     // cell page
     var cellPageP = {
-        dim: { width: 50, height: 80 },
+        dim: { width: 150, height: 240 },
         position: { x: -200, y: 40, z: 0 },
         // opacity must be set to 0 for page to be transparent.
         // color of mesh should also be set to black
@@ -717,7 +717,7 @@ app.onResize = () => {
 
     app.camera1.aspect = app.width / app.height;
     app.camera1.updateProjectionMatrix();
-
+    app.CSS3DRenderer.setSize(app.width, app.height);
     app.renderer.setSize(app.width, app.height);
 };
 
