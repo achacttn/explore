@@ -21,7 +21,7 @@ Complicated objects with many vertices and faces (such as a human) were imported
 
 ![Typical result when googling "human model"](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/humanmodel01.png)
 
-![Human](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/humanmode02.png)
+![Human](https://raw.githubusercontent.com/achacttn/explore/master/readmesrc/humanmodel02.png)
 
 Galaxy was created by defining a vertex shader to describe particle dimensions, as well as afragment shader for texture and color.
 
